@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusIQ - Campus Management System</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="logo-section">
+                <h1>CampusIQ</h1>
+                <p>Campus Management System</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-input">
+                        <input type="password" id="password" name="password" required>
+                        <button type="button" id="togglePassword" class="toggle-password">👁️</button>
+                    </div>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="rememberMe" name="rememberMe">
+                    <label for="rememberMe">Remember me</label>
+                </div>
+                <button type="submit" class="login-btn">Login</button>
+                <div class="forgot-password">
+                    <a href="#" id="forgotPassword">Forgot Password? Contact Admin</a>
+                </div>
+            </form>
+            <div id="dbStatus" style="margin-top: 20px; text-align: center; font-size: 0.9rem;">
+                <!-- Database status will be displayed here -->
+            </div>
+        </div>
+    </div>
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/test.js"></script> <!-- Load diagnostic script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dbStatusDiv = document.getElementById('dbStatus');
+            if (window.campusDB) {
+                try {
+                    // Attempt to fetch a small piece of data to confirm functionality
+                    const users = window.campusDB.getStorageData('users');
+                    if (users && users.length > 0) {
+                        dbStatusDiv.innerHTML = '<span style="color: var(--success);">✅ Database Connected & Data Loaded.</span>';
+                        console.log('DB Check: Database connected and sample data found.');
+                    } else {
+                        dbStatusDiv.innerHTML = '<span style="color: var(--warning);">⚠️ Database Connected, but no data found.</span>';
+                        console.warn('DB Check: Database connected but no sample data found.');
+                    }
+                } catch (e) {
+                    dbStatusDiv.innerHTML = '<span style="color: var(--error);">❌ Database Error: ' + e.message + '</span>';
+                    console.error('DB Check: Error accessing database:', e);
+                }
+            } else {
+                dbStatusDiv.innerHTML = '<span style="color: var(--error);">❌ Database Not Initialized.</span>';
+                console.error('DB Check: window.campusDB is not defined.');
+            }
+        });
+    </script>
+</body>
+</html>

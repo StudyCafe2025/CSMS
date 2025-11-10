@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard - CampusIQ</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <nav class="sidebar">
+            <div class="nav-brand">
+                <h2>CampusIQ</h2>
+                <span class="role-badge">Faculty</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link active">
+                        <span class="icon">🏠</span> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="attendance.html" class="nav-link">
+                        <span class="icon">✅</span> Attendance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="marks.html" class="nav-link">
+                        <span class="icon">📊</span> Marks
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="students.html" class="nav-link">
+                        <span class="icon">👥</span> Students
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="timetable.html" class="nav-link">
+                        <span class="icon">📅</span> Timetable
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="resources.html" class="nav-link">
+                        <span class="icon">📚</span> Resources
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="assessments.html" class="nav-link">
+                        <span class="icon">📝</span> Assignments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="profile.html" class="nav-link">
+                        <span class="icon">👤</span> Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link logout-btn">
+                        <span class="icon">🚪</span> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <h1>Faculty Dashboard</h1>
+                <div class="header-actions">
+                    <span id="currentDateTime"></span>
+                    <span id="userWelcome"></span>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Quick Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalSubjects">0</div>
+                        <div class="stat-label">Subjects Taught</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-number" id="totalStudents">0</div>
+                        <div class="stat-label">Total Students</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-number" id="pendingTasks">0</div>
+                        <div class="stat-label">Pending Tasks</div>
+                    </div>
+                    <div class="stat-card error">
+                        <div class="stat-number" id="lowAttendance">0</div>
+                        <div class="stat-label">Low Attendance Alerts</div>
+                    </div>
+                </div>
+
+                <!-- Today's Schedule and Recent Activities -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Today's Schedule</h2>
+                            <span id="todayDate"></span>
+                        </div>
+                        <div id="todaySchedule">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Recent Activities</h2>
+                        </div>
+                        <div id="recentActivities">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Announcements -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Announcements</h2>
+                    </div>
+                    <div id="announcements">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Overview by Subject -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Performance Overview by Subject</h2>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Subject & Class</th>
+                                    <th>Students</th>
+                                    <th>Avg. Attendance %</th>
+                                    <th>Avg. Performance %</th>
+                                    <th>At-Risk Students</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="performanceOverview">
+                                <tr>
+                                    <td colspan="6" class="loading">
+                                        <div class="spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/faculty-dashboard.js"></script>
+</body>
+</html>

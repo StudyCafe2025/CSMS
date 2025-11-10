@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - CampusIQ</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    .profile-sections {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .profile-sections .btn {
+      flex: 1;
+    }
+    .profile-details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    .profile-details-grid .detail-item.full-width {
+      grid-column: 1 / -1;
+    }
+    .profile-details-grid strong {
+      color: var(--gray-700);
+    }
+    .profile-picture {
+      background-color: var(--primary);
+      color: white;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-layout">
+    <nav class="sidebar">
+      <div class="nav-brand">
+        <h2>CampusIQ</h2>
+        <span class="role-badge">Student</span>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="dashboard.html" class="nav-link">
+            <span class="icon">🏠</span> Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="attendance.html" class="nav-link">
+            <span class="icon">🗓️</span> My Attendance
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="marks.html" class="nav-link">
+            <span class="icon">📊</span> My Marks
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="resources.html" class="nav-link">
+            <span class="icon">📚</span> Resources
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="assignments.html" class="nav-link">
+            <span class="icon">📝</span> Assignments
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="profile.html" class="nav-link active">
+            <span class="icon">👤</span> Profile
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link logout-btn">
+            <span class="icon">🚪</span> Logout
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <main class="main-content">
+      <header class="header">
+        <h1>My Profile</h1>
+        <div class="header-actions">
+          <!-- Edit button moved inside personal details section -->
+        </div>
+      </header>
+
+      <div class="content-area">
+        <div id="profileAlert" style="display: none;"></div>
+
+        <!-- Profile Overview -->
+        <div style="display: grid; grid-template-columns: 300px 1fr; gap: 30px; margin-bottom: 20px;">
+          <!-- Profile Picture and Basic Info -->
+          <div class="card">
+            <div style="text-align: center;">
+              <div class="profile-picture" style="width: 120px; height: 120px; margin: 0 auto 20px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+                <span id="profileInitials">S</span>
+              </div>
+              <h3 id="profileName" style="margin: 0 0 5px 0; color: var(--gray-800);"></h3>
+              <p id="profileStudentId" style="margin: 0 0 10px 0; color: var(--gray-600); font-size: 0.9rem;"></p>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <span class="badge badge-info" id="profileBranch"></span>
+                <span class="badge badge-secondary" id="profileYearSem"></span>
+                <span class="badge badge-success" id="profileStatus"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile Sections (Personal/Academic) -->
+          <div>
+            <div class="profile-sections">
+              <button class="btn btn-primary" id="showPersonalDetailsBtn">Personal Details</button>
+              <button class="btn btn-secondary" id="showAcademicDetailsBtn">Academic Details</button>
+            </div>
+
+            <!-- Personal Details Section -->
+            <div id="personalDetailsSection" class="card">
+              <div class="card-header">
+                <h2 class="card-title">Personal Information</h2>
+                <button class="btn btn-primary btn-sm" id="toggleEditPersonalBtn">
+                  <span id="toggleEditPersonalIcon">✏️</span> <span id="toggleEditPersonalText">Edit Personal Details</span>
+                </button>
+              </div>
+              <form id="personalDetailsForm">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                  <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" id="name" class="form-input" readonly>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="email" class="form-input" readonly>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" id="phone" class="form-input" readonly>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Date of Birth</label>
+                    <input type="date" id="dateOfBirth" class="form-input" readonly>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Address</label>
+                  <textarea id="address" class="form-textarea" rows="3" readonly></textarea>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                  <div class="form-group">
+                    <label class="form-label">Father's Name</label>
+                    <input type="text" id="fatherName" class="form-input" readonly>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Mother's Name</label>
+                    <input type="text" id="motherName" class="form-input" readonly>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Parents' Phone</label>
+                    <input type="tel" id="parentsPhone" class="form-input" readonly>
+                  </div>
+                </div>
+                <div id="personalEditActions" style="display: none; margin-top: 20px; text-align: right;">
+                  <button type="button" class="btn btn-secondary" id="cancelPersonalBtn">Cancel</button>
+                  <button type="button" class="btn btn-primary" id="savePersonalBtn">Save Changes</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Academic Details Section -->
+            <div id="academicDetailsSection" class="card" style="display: none;">
+              <div class="card-header">
+                <h2 class="card-title">Academic Information</h2>
+                <span class="badge badge-warning">View Only</span>
+              </div>
+              <div class="profile-details-grid">
+                <div class="detail-item"><strong>Student ID:</strong> <span id="academicStudentId"></span></div>
+                <div class="detail-item"><strong>Branch:</strong> <span id="academicBranch"></span></div>
+                <div class="detail-item"><strong>Year:</strong> <span id="academicYear"></span></div>
+                <div class="detail-item"><strong>Semester:</strong> <span id="academicSemester"></span></div>
+                <div class="detail-item"><strong>Section:</strong> <span id="academicSection"></span></div>
+              </div>
+              <hr style="margin: 20px 0; border: none; border-top: 1px dashed var(--gray-200);">
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <div class="stat-number" id="currentCGPA">0.0</div>
+                  <div class="stat-label">Current CGPA</div>
+                </div>
+                <div class="stat-card success">
+                  <div class="stat-number" id="creditsEarned">0</div>
+                  <div class="stat-label">Credits Earned</div>
+                </div>
+                <div class="stat-card warning">
+                  <div class="stat-number" id="overallAttendance">0%</div>
+                  <div class="stat-label">Overall Attendance</div>
+                </div>
+                <div class="stat-card error">
+                  <div class="stat-number" id="backlogSubjects">0</div>
+                  <div class="stat-label">Backlog Subjects</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Change Password Section -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Change Password</h2>
+          </div>
+          <form id="passwordForm">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; max-width: 600px;">
+              <div class="form-group">
+                <label class="form-label">Current Password</label>
+                <input type="password" id="currentPassword" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">New Password</label>
+                <input type="password" id="newPassword" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Confirm Password</label>
+                <input type="password" id="confirmPassword" class="form-input" required>
+              </div>
+            </div>
+            <div style="margin-top: 15px;">
+              <button type="submit" class="btn btn-primary">Change Password</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/database.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/marks-calculator.js"></script> <!-- Load marks-calculator.js first -->
+  <script src="../js/student-profile.js"></script>
+</body>
+</html>

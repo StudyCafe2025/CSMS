@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Management - CampusIQ</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <nav class="sidebar">
+            <div class="nav-brand">
+                <h2>CampusIQ</h2>
+                <span class="role-badge">Admin</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <span class="icon">🏠</span> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="students.html" class="nav-link">
+                        <span class="icon">👥</span> Students
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="faculty.html" class="nav-link active">
+                        <span class="icon">👨‍🏫</span> Faculty
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="departments.html" class="nav-link">
+                        <span class="icon">🏢</span> Departments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="subjects.html" class="nav-link">
+                        <span class="icon">📚</span> Subjects
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="subject-allocation.html" class="nav-link">
+                        <span class="icon">🔗</span> Subject Allocation
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="fees.html" class="nav-link">
+                        <span class="icon">💰</span> Fees
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="announcements.html" class="nav-link">
+                        <span class="icon">📣</span> Announcements
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="analytics.html" class="nav-link">
+                        <span class="icon">📊</span> Analytics
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link logout-btn">
+                        <span class="icon">🚪</span> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <h1>Faculty Management</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showAddFacultyModal()">
+                        <span>➕</span> Add Faculty
+                    </button>
+                    <button class="btn btn-success" onclick="showImportFacultyModal()">
+                        <span>📥</span> Import Faculty
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Search and Filter Bar -->
+                <div class="card">
+                    <div class="search-filter-bar">
+                        <input type="text" id="searchInput" class="form-input search-input" placeholder="Search by Faculty ID, Name or Email...">
+                        <select id="departmentFilter" class="form-select filter-select">
+                            <option value="">All Departments</option>
+                            <option value="Civil Engineering">Civil Engineering</option>
+                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                            <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+                            <option value="Electrical & Electronics Engineering">Electrical & Electronics Engineering</option>
+                            <option value="Computer Science & Engineering (Data Science)">Computer Science & Engineering (Data Science)</option>
+                            <option value="Electronics & Communication Engineering">Electronics & Communication Engineering</option>
+                            <option value="Artificial Intelligence & Data Science">Artificial Intelligence & Data Science</option>
+                            <option value="Artificial Intelligence & Machine Learning">Artificial Intelligence & Machine Learning</option>
+                            <option value="Computer Science & Engineering (Artificial Intelligence)">Computer Science & Engineering (Artificial Intelligence)</option>
+                        </select>
+                        <select id="designationFilter" class="form-select filter-select">
+                            <option value="">All Designations</option>
+                            <option value="Professor">Professor</option>
+                            <option value="Associate Professor">Associate Professor</option>
+                            <option value="Assistant Professor">Assistant Professor</option>
+                            <option value="Lecturer">Lecturer</option>
+                        </select>
+                        <button class="btn btn-secondary" onclick="exportFaculty()">
+                            <span>📊</span> Export
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Faculty Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">All Faculty Members</h2>
+                        <div>
+                            <span id="totalCount" class="badge badge-info">0 faculty</span>
+                            <button class="btn btn-danger btn-sm" onclick="deleteAllFaculty()" style="margin-left: 10px;">
+                                <span>🗑️</span> Delete All
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Faculty ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Department</th>
+                                    <th>Designation</th>
+                                    <th>Experience</th>
+                                    <th>Subjects Taught</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="facultyTableBody">
+                                <tr>
+                                    <td colspan="8" class="loading">
+                                        <div class="spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="pagination">
+                        <!-- Pagination buttons will be generated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Faculty Modal -->
+    <div id="facultyModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="facultyModalTitle">Add Faculty</h3>
+                <button class="modal-close" onclick="hideFacultyModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="facultyForm">
+                    <input type="hidden" id="facultyId">
+                    <div class="form-group">
+                        <label for="facultyName" class="form-label">Full Name *</label>
+                        <input type="text" id="facultyName" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="facultyEmail" class="form-label">Email *</label>
+                        <input type="email" id="facultyEmail" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="facultyFacultyId" class="form-label">Faculty ID *</label>
+                        <input type="text" id="facultyFacultyId" class="form-input" required placeholder="e.g., FAC001">
+                    </div>
+                    <div class="form-group">
+                        <label for="facultyPhone" class="form-label">Phone Number</label>
+                        <input type="tel" id="facultyPhone" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="facultyDepartment" class="form-label">Department *</label>
+                        <select id="facultyDepartment" class="form-select" required>
+                            <option value="">Select Department</option>
+                            <option value="Civil Engineering">Civil Engineering</option>
+                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                            <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+                            <option value="Electrical & Electronics Engineering">Electrical & Electronics Engineering</option>
+                            <option value="Computer Science & Engineering (Data Science)">Computer Science & Engineering (Data Science)</option>
+                            <option value="Electronics & Communication Engineering">Electronics & Communication Engineering</option>
+                            <option value="Artificial Intelligence & Data Science">Artificial Intelligence & Data Science</option>
+                            <option value="Artificial Intelligence & Machine Learning">Artificial Intelligence & Machine Learning</option>
+                            <option value="Computer Science & Engineering (Artificial Intelligence)">Computer Science & Engineering (Artificial Intelligence)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="facultyDesignation" class="form-label">Designation *</label>
+                        <select id="facultyDesignation" class="form-select" required>
+                            <option value="">Select Designation</option>
+                            <option value="Professor">Professor</option>
+                            <option value="Associate Professor">Associate Professor</option>
+                            <option value="Assistant Professor">Assistant Professor</option>
+                            <option value="Lecturer">Lecturer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="facultyQualification" class="form-label">Qualification</label>
+                        <input type="text" id="facultyQualification" class="form-input" placeholder="e.g., PhD in Computer Science">
+                    </div>
+                    <div class="form-group">
+                        <label for="facultyExperience" class="form-label">Experience (Years)</label>
+                        <input type="number" id="facultyExperience" class="form-input" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="facultyAddress" class="form-label">Address</label>
+                        <textarea id="facultyAddress" class="form-textarea" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideFacultyModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveFaculty()">Save Faculty</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Faculty Modal -->
+    <div id="importFacultyModal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Import Faculty</h3>
+                <button class="modal-close" onclick="hideImportFacultyModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="facultyCsvFile" class="form-label">Select CSV File</label>
+                    <input type="file" id="facultyCsvFile" class="form-input" accept=".csv" onchange="handleFacultyFileSelect(event)">
+                    <small style="color: var(--gray-600);">
+                        Upload a **CSV file** with columns: `name`, `email`, `faculty_id`, `department`, `designation`, `qualification`, `experience`, `phone`, `address`, `username`, `password`.
+                    </small>
+                </div>
+                <div class="form-group">
+                    <a href="#" onclick="downloadFacultyTemplate()" class="btn btn-secondary btn-sm">
+                        <span>📄</span> Download Template
+                    </a>
+                </div>
+                <div id="importFacultyPreview" style="display: none;">
+                    <h4>Preview (First 5 rows):</h4>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead id="previewFacultyHeader"></thead>
+                            <tbody id="previewFacultyBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="importFacultyResults" style="display: none;">
+                    <div class="alert alert-success">
+                        <strong>Import completed!</strong>
+                        <div id="importFacultyStats"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideImportFacultyModal()">Cancel</button>
+                <button class="btn btn-primary" id="importFacultyBtn" onclick="importFaculty()" disabled>Import Faculty</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin-faculty.js"></script>
+</body>
+</html>

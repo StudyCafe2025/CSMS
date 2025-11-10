@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcements - CampusIQ</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <nav class="sidebar">
+            <div class="nav-brand">
+                <h2>CampusIQ</h2>
+                <span class="role-badge">Admin</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <span class="icon">🏠</span> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="students.html" class="nav-link">
+                        <span class="icon">👥</span> Students
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="faculty.html" class="nav-link">
+                        <span class="icon">👨‍🏫</span> Faculty
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="departments.html" class="nav-link">
+                        <span class="icon">🏢</span> Departments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="subjects.html" class="nav-link">
+                        <span class="icon">📚</span> Subjects
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="subject-allocation.html" class="nav-link">
+                        <span class="icon">🔗</span> Subject Allocation
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="fees.html" class="nav-link">
+                        <span class="icon">💰</span> Fees
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="announcements.html" class="nav-link active">
+                        <span class="icon">📣</span> Announcements
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="analytics.html" class="nav-link">
+                        <span class="icon">📊</span> Analytics
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link logout-btn">
+                        <span class="icon">🚪</span> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <h1>Announcements</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showCreateAnnouncementModal()">
+                        <span>➕</span> Create Announcement
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Quick Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalAnnouncements">0</div>
+                        <div class="stat-label">Total Announcements</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-number" id="activeAnnouncements">0</div>
+                        <div class="stat-label">Active</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-number" id="draftAnnouncements">0</div>
+                        <div class="stat-label">Drafts</div>
+                    </div>
+                    <div class="stat-card info">
+                        <div class="stat-number" id="scheduledAnnouncements">0</div>
+                        <div class="stat-label">Scheduled</div>
+                    </div>
+                </div>
+
+                <!-- Search and Filter Bar -->
+                <div class="card">
+                    <div class="search-filter-bar">
+                        <input type="text" id="searchInput" class="form-input search-input" placeholder="Search by title or content...">
+                        <select id="audienceFilter" class="form-select filter-select">
+                            <option value="">All Audiences</option>
+                            <option value="all">All Users</option>
+                            <option value="student">Students</option>
+                            <option value="faculty">Faculty</option>
+                            <option value="admin">Admins</option>
+                        </select>
+                        <select id="statusFilter" class="form-select filter-select">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="draft">Draft</option>
+                            <option value="scheduled">Scheduled</option>
+                            <option value="expired">Expired</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Announcements List -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">All Announcements</h2>
+                    </div>
+                    <div id="announcementsList">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create/Edit Announcement Modal -->
+    <div id="announcementModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="announcementModalTitle">Create Announcement</h3>
+                <button class="modal-close" onclick="hideAnnouncementModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="announcementForm">
+                    <input type="hidden" id="announcementId">
+                    <div class="form-group">
+                        <label for="announcementTitle" class="form-label">Title *</label>
+                        <input type="text" id="announcementTitle" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="announcementContent" class="form-label">Content *</label>
+                        <textarea id="announcementContent" class="form-textarea" rows="5" required></textarea>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label for="announcementAudience" class="form-label">Target Audience *</label>
+                            <select id="announcementAudience" class="form-select" required>
+                                <option value="all">All Users</option>
+                                <option value="student">Students</option>
+                                <option value="faculty">Faculty</option>
+                                <option value="admin">Admins</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="announcementPriority" class="form-label">Priority</label>
+                            <select id="announcementPriority" class="form-select">
+                                <option value="normal">Normal</option>
+                                <option value="high">High</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="announcementExpiry" class="form-label">Expires On (Optional)</label>
+                        <input type="date" id="announcementExpiry" class="form-input">
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="sendEmail">
+                        <label for="sendEmail">Send Email Notification</label>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="pinAnnouncement">
+                        <label for="pinAnnouncement">Pin to Dashboard</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="saveDraft()">Save as Draft</button>
+                <button class="btn btn-primary" onclick="publishAnnouncement()">Publish</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Announcement Modal -->
+    <div id="previewModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Announcement Preview</h3>
+                <button class="modal-close" onclick="hidePreviewModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="previewContent">
+                <!-- Content will be loaded here by JS -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hidePreviewModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin-announcements.js"></script>
+</body>
+</html>

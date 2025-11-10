@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subject Allocation - CampusIQ</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <nav class="sidebar">
+            <div class="nav-brand">
+                <h2>CampusIQ</h2>
+                <span class="role-badge">Admin</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <span class="icon">🏠</span> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="students.html" class="nav-link">
+                        <span class="icon">👥</span> Students
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="faculty.html" class="nav-link">
+                        <span class="icon">👨‍🏫</span> Faculty
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="departments.html" class="nav-link">
+                        <span class="icon">🏢</span> Departments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="subjects.html" class="nav-link">
+                        <span class="icon">📚</span> Subjects
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="subject-allocation.html" class="nav-link active">
+                        <span class="icon">🔗</span> Subject Allocation
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="fees.html" class="nav-link">
+                        <span class="icon">💰</span> Fees
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="announcements.html" class="nav-link">
+                        <span class="icon">📣</span> Announcements
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="analytics.html" class="nav-link">
+                        <span class="icon">📊</span> Analytics
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link logout-btn">
+                        <span class="icon">🚪</span> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <h1>Subject Allocation</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showAllocateSubjectModal()">
+                        <span>➕</span> Allocate Subject
+                    </button>
+                    <button class="btn btn-success" onclick="showImportAllocationModal()">
+                        <span>📥</span> Import Allocations
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Search and Filter Bar -->
+                <div class="card">
+                    <div class="search-filter-bar">
+                        <select id="branchFilter" class="form-select filter-select" onchange="subjectAllocation.filterOfferings()">
+                            <option value="">All Branches</option>
+                            <!-- Populated by JS -->
+                        </select>
+                        <select id="yearFilter" class="form-select filter-select" onchange="subjectAllocation.handleMainFilterChange()">
+                            <option value="">All Years</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                        </select>
+                        <select id="semesterFilter" class="form-select filter-select" onchange="subjectAllocation.filterOfferings()">
+                            <option value="">All Semesters</option>
+                            <!-- Populated dynamically by JS -->
+                        </select>
+                        <select id="sectionFilter" class="form-select filter-select" onchange="subjectAllocation.filterOfferings()">
+                            <option value="">All Sections</option>
+                            <option value="A">Section A</option>
+                            <option value="B">Section B</option>
+                            <option value="C">Section C</option>
+                        </select>
+                        <select id="statusFilter" class="form-select filter-select" onchange="subjectAllocation.filterOfferings()">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="cleared">Cleared</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Class Offerings Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Current Class Offerings</h2>
+                        <div>
+                            <span id="totalOfferings" class="badge badge-info">0 offerings</span>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Branch</th>
+                                    <th>Year</th>
+                                    <th>Semester</th>
+                                    <th>Section</th>
+                                    <th>Subject</th>
+                                    <th>Type</th>
+                                    <th>Faculty</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="classOfferingsTableBody">
+                                <tr>
+                                    <td colspan="9" class="loading">
+                                        <div class="spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="pagination">
+                        <!-- Pagination buttons will be generated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Allocate Subject Modal -->
+    <div id="allocateSubjectModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="allocateSubjectModalTitle">Allocate Subject</h3>
+                <button class="modal-close" onclick="hideAllocateSubjectModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="allocateSubjectForm">
+                    <input type="hidden" id="offeringId">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label for="offeringBranch" class="form-label">Branch *</label>
+                            <select id="offeringBranch" class="form-select" required>
+                                <option value="">Select Branch</option>
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="offeringYear" class="form-label">Year *</label>
+                            <select id="offeringYear" class="form-select" required>
+                                <option value="">Select Year</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="offeringSemester" class="form-label">Semester *</label>
+                            <select id="offeringSemester" class="form-select" required disabled>
+                                <option value="">Select Semester</option>
+                                <!-- Populated dynamically by JS -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="offeringSection" class="form-label">Section *</label>
+                            <select id="offeringSection" class="form-select" required>
+                                <option value="">Select Section</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="offeringType" class="form-label">Subject Type *</label>
+                            <select id="offeringType" class="form-select" required>
+                                <option value="">Select Type</option>
+                                <option value="theory">Theory</option>
+                                <option value="lab">Lab</option>
+                                <option value="skill_course">Skill Course</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="offeringSubject" class="form-label">Subject *</label>
+                            <select id="offeringSubject" class="form-select" required disabled>
+                                <option value="">Select Subject</option>
+                                <!-- Populated dynamically by JS -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="offeringFaculty" class="form-label">Faculty *</label>
+                            <select id="offeringFaculty" class="form-select" required>
+                                <option value="">Select Faculty</option>
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="offeringStatus" class="form-label">Status *</label>
+                            <select id="offeringStatus" class="form-select" required>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="cleared">Cleared</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideAllocateSubjectModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveClassOffering()">Save Allocation</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Allocations Modal -->
+    <div id="importAllocationModal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Import Subject Allocations</h3>
+                <button class="modal-close" onclick="hideImportAllocationModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="allocationCsvFile" class="form-label">Select CSV File</label>
+                    <input type="file" id="allocationCsvFile" class="form-input" accept=".csv" onchange="handleAllocationFileSelect(event)">
+                    <small style="color: var(--gray-600);">
+                        Upload a **CSV file** with columns: `branch`, `year`, `semester`, `section`, `subject_type` (theory/lab/skill_course), `subject_code`, `faculty_id` (e.g., FAC001), `is_active` (true/false), `is_cleared` (true/false).
+                    </small>
+                </div>
+                <div class="form-group">
+                    <a href="#" onclick="downloadAllocationTemplate()" class="btn btn-secondary btn-sm">
+                        <span>📄</span> Download Template
+                    </a>
+                </div>
+                <div id="importAllocationPreview" style="display: none;">
+                    <h4>Preview (First 5 rows):</h4>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead id="previewAllocationHeader"></thead>
+                            <tbody id="previewAllocationBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="importAllocationResults" style="display: none;">
+                    <div class="alert alert-success">
+                        <strong>Import completed!</strong>
+                        <div id="importAllocationStats"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideImportAllocationModal()">Cancel</button>
+                <button class="btn btn-primary" id="importAllocationBtn" onclick="importAllocations()" disabled>Import Allocations</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin-subject-allocation.js"></script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Students - CampusIQ</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <nav class="sidebar">
+            <div class="nav-brand">
+                <h2>CampusIQ</h2>
+                <span class="role-badge">Faculty</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <span class="icon">🏠</span> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="attendance.html" class="nav-link">
+                        <span class="icon">✅</span> Attendance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="marks.html" class="nav-link">
+                        <span class="icon">📋</span> Marks
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="students.html" class="nav-link active">
+                        <span class="icon">👥</span> Students
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="timetable.html" class="nav-link">
+                        <span class="icon">🗓️</span> Timetable
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="resources.html" class="nav-link">
+                        <span class="icon">🗃️</span> Resources
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="assessments.html" class="nav-link">
+                        <span class="icon">📝</span> Assessments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link logout-btn">
+                        <span class="icon">🚪</span> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <h1>My Students</h1>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="facultyStudents.exportStudents()">
+                        <span>📊</span> Export Students
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div id="facultyStudentsAlert" style="display: none;"></div>
+
+                <!-- Filter Bar -->
+                <div class="card">
+                    <div class="search-filter-bar">
+                        <select id="subjectFilter" class="form-select filter-select" onchange="facultyStudents.filterStudents()">
+                            <option value="">All My Subjects</option>
+                            <!-- Options populated by JS -->
+                        </select>
+                        <select id="yearFilter" class="form-select filter-select" onchange="facultyStudents.filterStudents()">
+                            <option value="">All Years</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                        </select>
+                        <select id="semesterFilter" class="form-select filter-select" onchange="facultyStudents.filterStudents()">
+                            <option value="">All Semesters</option>
+                            <option value="1">Semester 1</option>
+                            <option value="2">Semester 2</option>
+                            <option value="3">Semester 3</option>
+                            <option value="4">Semester 4</option>
+                            <option value="5">Semester 5</option>
+                            <option value="6">Semester 6</option>
+                            <option value="7">Semester 7</option>
+                            <option value="8">Semester 8</option>
+                        </select>
+                        <select id="sectionFilter" class="form-select filter-select" onchange="facultyStudents.filterStudents()">
+                            <option value="">All Sections</option>
+                            <option value="A">Section A</option>
+                            <option value="B">Section B</option>
+                            <option value="C">Section C</option>
+                        </select>
+                        <input type="text" id="searchInput" class="form-input search-input" placeholder="Search by Student ID or Name...">
+                    </div>
+                </div>
+
+                <!-- Students List -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Students in My Classes</h2>
+                        <div>
+                            <span id="totalStudentsCount" class="badge badge-info">0 students</span>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Branch</th>
+                                    <th>Year</th>
+                                    <th>Sem</th>
+                                    <th>Sec</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTableBody">
+                                <tr>
+                                    <td colspan="8" class="loading">
+                                        <div class="spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="pagination">
+                        <!-- Pagination buttons will be generated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Student Details Modal -->
+    <div id="studentDetailsModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="studentModalTitle">Student Details</h3>
+                <button class="modal-close" onclick="facultyStudents.hideStudentDetailsModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-details-grid">
+                    <div class="detail-item"><strong>Name:</strong> <span id="modalStudentName"></span></div>
+                    <div class="detail-item"><strong>Student ID:</strong> <span id="modalStudentId"></span></div>
+                    <div class="detail-item"><strong>Email:</strong> <span id="modalStudentEmail"></span></div>
+                    <div class="detail-item"><strong>Phone:</strong> <span id="modalStudentPhone"></span></div>
+                    <div class="detail-item"><strong>Branch:</strong> <span id="modalStudentBranch"></span></div>
+                    <div class="detail-item"><strong>Year:</strong> <span id="modalStudentYear"></span></div>
+                    <div class="detail-item"><strong>Semester:</strong> <span id="modalStudentSemester"></span></div>
+                    <div class="detail-item"><strong>Section:</strong> <span id="modalStudentSection"></span></div>
+                    <div class="detail-item"><strong>DOB:</strong> <span id="modalStudentDOB"></span></div>
+                    <div class="detail-item"><strong>Status:</strong> <span id="modalStudentStatus"></span></div>
+                    <div class="detail-item full-width"><strong>Address:</strong> <span id="modalStudentAddress"></span></div>
+                    <div class="detail-item"><strong>Father's Name:</strong> <span id="modalStudentFatherName"></span></div>
+                    <div class="detail-item"><strong>Mother's Name:</strong> <span id="modalStudentMotherName"></span></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="facultyStudents.hideStudentDetailsModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/faculty-students.js"></script>
+</body>
+</html>

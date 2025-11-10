@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Management - CampusIQ</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <nav class="sidebar">
+            <div class="nav-brand">
+                <h2>CampusIQ</h2>
+                <span class="role-badge">Faculty</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <span class="icon">🏠</span> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="attendance.html" class="nav-link active">
+                        <span class="icon">✅</span> Attendance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="marks.html" class="nav-link">
+                        <span class="icon">📊</span> Marks
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="students.html" class="nav-link">
+                        <span class="icon">👥</span> Students
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="timetable.html" class="nav-link">
+                        <span class="icon">🗓️</span> Timetable
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="resources.html" class="nav-link">
+                        <span class="icon">🗃️</span> Resources
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="assessments.html" class="nav-link">
+                        <span class="icon">📝</span> Assessments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link logout-btn">
+                        <span class="icon">🚪</span> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <h1>Attendance Management</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showMarkAttendanceModal()">
+                        <span>➕</span> Mark Attendance
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Subject and Date Selection -->
+                <div class="card">
+                    <div class="search-filter-bar">
+                        <select id="subjectFilter" class="form-select filter-select" onchange="facultyAttendance.loadAttendance()">
+                            <option value="">Select Subject & Class</option>
+                            <!-- Options populated by JS -->
+                        </select>
+                        <input type="date" id="dateFilter" class="form-input filter-select" onchange="facultyAttendance.loadAttendance()">
+                        <button class="btn btn-secondary" onclick="facultyAttendance.exportAttendance()">
+                            <span>📊</span> Export Daily
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Attendance Summary -->
+                <div class="stats-grid" id="attendanceStats" style="display: none;">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalStudents">0</div>
+                        <div class="stat-label">Total Students</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-number" id="presentCount">0</div>
+                        <div class="stat-label">Present</div>
+                    </div>
+                    <div class="stat-card error">
+                        <div class="stat-number" id="absentCount">0</div>
+                        <div class="stat-label">Absent</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-number" id="attendanceRate">0%</div>
+                        <div class="stat-label">Attendance Rate</div>
+                    </div>
+                </div>
+
+                <!-- Attendance Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Daily Attendance Records</h2>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Student Name</th>
+                                    <th>Class Time</th>
+                                    <th>Status</th>
+                                    <th>Reason</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendanceTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center">Select subject and date to view attendance</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Monthly Attendance Overview -->
+                <div class="card" id="monthlyOverview" style="display: none;">
+                    <div class="card-header">
+                        <h2 class="card-title">Monthly Attendance Overview</h2>
+                        <div class="search-filter-bar">
+                            <select id="monthFilter" class="form-select filter-select" onchange="facultyAttendance.loadMonthlyOverview()">
+                                <!-- Options populated by JS -->
+                            </select>
+                            <button class="btn btn-secondary" onclick="facultyAttendance.exportAttendance()">
+                                <span>📊</span> Export Monthly
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Student Name</th>
+                                    <th>Total Classes</th>
+                                    <th>Present</th>
+                                    <th>Absent</th>
+                                    <th>Attendance %</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="monthlyOverviewBody">
+                                <tr>
+                                    <td colspan="7" class="loading">
+                                        <div class="spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mark Attendance Modal -->
+    <div id="attendanceModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Mark Attendance</h3>
+                <button class="modal-close" onclick="hideAttendanceModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="attendanceForm">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                        <div class="form-group">
+                            <label for="attendanceSubject" class="form-label">Subject & Class *</label>
+                            <select id="attendanceSubject" class="form-select" required onchange="facultyAttendance.handleSubjectChange()">
+                                <option value="">Select Subject & Class</option>
+                                <!-- Options populated by JS -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="attendanceDate" class="form-label">Date *</label>
+                            <input type="date" id="attendanceDate" class="form-input" required onchange="facultyAttendance.handlePeriodChange()">
+                        </div>
+                        <div class="form-group">
+                            <label for="attendancePeriod" class="form-label">Period / Lab Block *</label>
+                            <select id="attendancePeriod" class="form-select" required disabled onchange="facultyAttendance.handlePeriodChange()">
+                                <option value="">Select Period</option>
+                                <!-- Options populated dynamically by JS -->
+                            </select>
+                            <input type="hidden" id="attendanceTime"> <!-- Hidden field to store actual time -->
+                        </div>
+                    </div>
+
+                    <div id="studentsAttendanceList" style="display: none;">
+                        <h4>Students List</h4>
+                        <div style="margin-bottom: 15px; display: flex; gap: 10px;">
+                            <button type="button" class="btn btn-success btn-sm" onclick="markAllPresent()">Mark All Present</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="markAllAbsent()">Mark All Absent</button>
+                        </div>
+                        <div class="students-attendance-grid" id="studentsAttendanceBody">
+                            <!-- Student attendance items will be rendered here -->
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideAttendanceModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveAttendance()">Save Attendance</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Attendance Modal -->
+    <div id="editAttendanceModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Attendance Record</h3>
+                <button class="modal-close" onclick="hideEditAttendanceModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editAttendanceForm">
+                    <input type="hidden" id="editAttendanceRecordId">
+                    <div class="form-group">
+                        <label class="form-label">Student Name</label>
+                        <input type="text" id="editStudentName" class="form-input" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Subject</label>
+                        <input type="text" id="editSubjectName" class="form-input" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date</label>
+                        <input type="date" id="editAttendanceDate" class="form-input" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Class Time</label>
+                        <input type="time" id="editAttendanceTime" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAttendanceStatus" class="form-label">Status *</label>
+                        <select id="editAttendanceStatus" class="form-select" required onchange="toggleEditReasonField()">
+                            <option value="present">Present</option>
+                            <option value="absent">Absent</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="editReasonGroup" style="display: none;">
+                        <label for="editAttendanceReason" class="form-label">Reason for Change *</label>
+                        <input type="text" id="editAttendanceReason" class="form-input" placeholder="Enter reason for changing attendance">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideEditAttendanceModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveEditedAttendance()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/faculty-attendance.js"></script>
+</body>
+</html>

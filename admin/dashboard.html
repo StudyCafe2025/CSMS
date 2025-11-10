@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - CampusIQ</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <nav class="sidebar">
+            <div class="nav-brand">
+                <h2>CampusIQ</h2>
+                <span class="role-badge">Admin</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link active">
+                        <span class="icon">🏠</span> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="students.html" class="nav-link">
+                        <span class="icon">👥</span> Students
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="faculty.html" class="nav-link">
+                        <span class="icon">👨‍🏫</span> Faculty
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="departments.html" class="nav-link">
+                        <span class="icon">🏢</span> Departments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="subjects.html" class="nav-link">
+                        <span class="icon">📚</span> Subjects
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="subject-allocation.html" class="nav-link">
+                        <span class="icon">🔗</span> Subject Allocation
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="timetable.html" class="nav-link">
+                        <span class="icon">🗓️</span> Timetable
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="fees.html" class="nav-link">
+                        <span class="icon">💰</span> Fees
+                    </a>
+                <li class="nav-item">
+                    <a href="announcements.html" class="nav-link">
+                        <span class="icon">📣</span> Announcements
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="analytics.html" class="nav-link">
+                        <span class="icon">📈</span> Analytics
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="external-marks.html" class="nav-link">
+                        <span class="icon">📝</span> External Marks
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link logout-btn">
+                        <span class="icon">🚪</span> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <h1>Admin Dashboard</h1>
+                <div class="header-actions">
+                    <span id="currentDateTime"></span>
+                    <span id="userWelcome"></span>
+                    <button class="btn btn-secondary" onclick="refreshDashboard()">
+                        <span>🔄</span> Refresh
+                    </button>
+                    <button class="btn btn-primary" onclick="exportDashboardData()">
+                        <span>📥</span> Export Data
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Quick Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalStudents">0</div>
+                        <div class="stat-label">Total Students</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-number" id="totalFaculty">0</div>
+                        <div class="stat-label">Total Faculty</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-number" id="totalDepartments">0</div>
+                        <div class="stat-label">Total Departments</div>
+                    </div>
+                    <div class="stat-card error">
+                        <div class="stat-number" id="pendingFees">₹0</div>
+                        <div class="stat-label">Pending Fees</div>
+                    </div>
+                </div>
+
+                <!-- Recent Activities and System Overview -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Recent Activities</h2>
+                        </div>
+                        <div id="recentActivities">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">System Overview by Department</h2>
+                        </div>
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Department</th>
+                                        <th>Students</th>
+                                        <th>Faculty</th>
+                                        <th>Attendance %</th>
+                                        <th>Fees %</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="systemOverview">
+                                    <tr>
+                                        <td colspan="5" class="loading">
+                                            <div class="spinner"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin-dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management - CampusIQ</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <nav class="sidebar">
+            <div class="nav-brand">
+                <h2>CampusIQ</h2>
+                <span class="role-badge">Admin</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <span class="icon">🏠</span> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="students.html" class="nav-link active">
+                        <span class="icon">👥</span> Students
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="faculty.html" class="nav-link">
+                        <span class="icon">👨‍🏫</span> Faculty
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="departments.html" class="nav-link">
+                        <span class="icon">🏢</span> Departments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="subjects.html" class="nav-link">
+                        <span class="icon">📚</span> Subjects
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="subject-allocation.html" class="nav-link">
+                        <span class="icon">🔗</span> Subject Allocation
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="fees.html" class="nav-link">
+                        <span class="icon">💰</span> Fees
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="announcements.html" class="nav-link">
+                        <span class="icon">📣</span> Announcements
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="analytics.html" class="nav-link">
+                        <span class="icon">📊</span> Analytics
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link logout-btn">
+                        <span class="icon">🚪</span> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <h1>Student Management</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showAddStudentModal()">
+                        <span>➕</span> Add Student
+                    </button>
+                    <button class="btn btn-success" onclick="showImportModal()">
+                        <span>📥</span> Import Students
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Search and Filter Bar -->
+                <div class="card">
+                    <div class="search-filter-bar">
+                        <input type="text" id="searchInput" class="form-input search-input" placeholder="Search by Student ID, Name or Email...">
+                        <select id="branchFilter" class="form-select filter-select">
+                            <option value="">All Branches</option>
+                            <option value="Civil Engineering">Civil Engineering</option>
+                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                            <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+                            <option value="Electrical & Electronics Engineering">Electrical & Electronics Engineering</option>
+                            <option value="Computer Science & Engineering (Data Science)">Computer Science & Engineering (Data Science)</option>
+                            <option value="Electronics & Communication Engineering">Electronics & Communication Engineering</option>
+                            <option value="Artificial Intelligence & Data Science">Artificial Intelligence & Data Science</option>
+                            <option value="Artificial Intelligence & Machine Learning">Artificial Intelligence & Machine Learning</option>
+                            <option value="Computer Science & Engineering (Artificial Intelligence)">Computer Science & Engineering (Artificial Intelligence)</option>
+                        </select>
+                        <select id="yearFilter" class="form-select filter-select">
+                            <option value="">All Years</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                        </select>
+                        <select id="semesterFilter" class="form-select filter-select">
+                            <option value="">All Semesters</option>
+                            <option value="1">Semester 1</option>
+                            <option value="2">Semester 2</option>
+                            <option value="3">Semester 3</option>
+                            <option value="4">Semester 4</option>
+                            <option value="5">Semester 5</option>
+                            <option value="6">Semester 6</option>
+                            <option value="7">Semester 7</option>
+                            <option value="8">Semester 8</option>
+                        </select>
+                        <select id="sectionFilter" class="form-select filter-select">
+                            <option value="">All Sections</option>
+                            <option value="A">Section A</option>
+                            <option value="B">Section B</option>
+                            <option value="C">Section C</option>
+                        </select>
+                        <button class="btn btn-secondary" onclick="exportStudents()">
+                            <span>📊</span> Export
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bulk Actions Bar -->
+                <div id="bulkActions" class="card" style="display: none; background-color: var(--gray-100); border-left: 4px solid var(--primary);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
+                        <span id="selectedCount" style="font-weight: 500; color: var(--gray-700);">0 students selected</span>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-primary btn-sm" onclick="showBulkUpdateModal()">
+                                <span>⬆️</span> Bulk Update
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="bulkDeleteStudents()">
+                                <span>🗑️</span> Delete Selected
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="clearSelection()">
+                                <span>✖️</span> Clear Selection
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Students Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">All Students</h2>
+                        <div>
+                            <span id="totalCount" class="badge badge-info">0 students</span>
+                            <button class="btn btn-danger btn-sm" onclick="deleteAllStudents()" style="margin-left: 10px;">
+                                <span>🗑️</span> Delete All
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Branch</th>
+                                    <th>Year</th>
+                                    <th>Sem</th>
+                                    <th>Sec</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTableBody">
+                                <tr>
+                                    <td colspan="10" class="loading">
+                                        <div class="spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="pagination">
+                        <!-- Pagination buttons will be generated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Student Modal -->
+    <div id="studentModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="studentModalTitle">Add Student</h3>
+                <button class="modal-close" onclick="hideStudentModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="studentForm">
+                    <input type="hidden" id="studentId">
+                    <div class="form-group">
+                        <label for="studentName" class="form-label">Full Name *</label>
+                        <input type="text" id="studentName" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentEmail" class="form-label">Email *</label>
+                        <input type="email" id="studentEmail" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentStudentId" class="form-label">Student ID *</label>
+                        <input type="text" id="studentStudentId" class="form-input" required placeholder="e.g., CS2021001">
+                    </div>
+                    <div class="form-group">
+                        <label for="studentPhone" class="form-label">Phone Number</label>
+                        <input type="tel" id="studentPhone" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="studentBranch" class="form-label">Branch *</label>
+                        <select id="studentBranch" class="form-select" required>
+                            <option value="">Select Branch</option>
+                            <option value="Civil Engineering">Civil Engineering</option>
+                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                            <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+                            <option value="Electrical & Electronics Engineering">Electrical & Electronics Engineering</option>
+                            <option value="Computer Science & Engineering (Data Science)">Computer Science & Engineering (Data Science)</option>
+                            <option value="Electronics & Communication Engineering">Electronics & Communication Engineering</option>
+                            <option value="Artificial Intelligence & Data Science">Artificial Intelligence & Data Science</option>
+                            <option value="Artificial Intelligence & Machine Learning">Artificial Intelligence & Machine Learning</option>
+                            <option value="Computer Science & Engineering (Artificial Intelligence)">Computer Science & Engineering (Artificial Intelligence)</option>
+                        </select>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label for="studentYear" class="form-label">Year *</label>
+                            <select id="studentYear" class="form-select" required>
+                                <option value="">Select Year</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentSemester" class="form-label">Semester *</label>
+                            <select id="studentSemester" class="form-select" required>
+                                <option value="">Select Semester</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentSection" class="form-label">Section *</label>
+                            <select id="studentSection" class="form-select" required>
+                                <option value="">Select Section</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentDOB" class="form-label">Date of Birth</label>
+                        <input type="date" id="studentDOB" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="studentAddress" class="form-label">Address</label>
+                        <textarea id="studentAddress" class="form-textarea" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentFatherName" class="form-label">Father's Name</label>
+                        <input type="text" id="studentFatherName" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="studentMotherName" class="form-label">Mother's Name</label>
+                        <input type="text" id="studentMotherName" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="studentParentsPhone" class="form-label">Parents' Phone</label>
+                        <input type="tel" id="studentParentsPhone" class="form-input">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideStudentModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveStudent()">Save Student</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Students Modal -->
+    <div id="importModal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Import Students</h3>
+                <button class="modal-close" onclick="hideImportModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="csvFile" class="form-label">Select CSV File</label>
+                    <input type="file" id="csvFile" class="form-input" accept=".csv" onchange="handleFileSelect(event)">
+                    <small style="color: var(--gray-600);">
+                        Upload a **CSV file** with columns: `name`, `email`, `student_id`, `branch`, `year`, `semester`, `section`, `phone`, `address`, `father_name`, `mother_name`, `parents_phone`, `date_of_birth`, `username`, `password`.
+                    </small>
+                </div>
+                <div class="form-group">
+                    <a href="#" onclick="downloadTemplate()" class="btn btn-secondary btn-sm">
+                        <span>📄</span> Download Template
+                    </a>
+                </div>
+                <div id="importPreview" style="display: none;">
+                    <h4>Preview (First 5 rows):</h4>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead id="previewHeader"></thead>
+                            <tbody id="previewBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="importResults" style="display: none;">
+                    <div class="alert alert-success">
+                        <strong>Import completed!</strong>
+                        <div id="importStats"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideImportModal()">Cancel</button>
+                <button class="btn btn-primary" id="importBtn" onclick="importStudents()" disabled>Import Students</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Update Modal -->
+    <div id="bulkUpdateModal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Bulk Update Students</h3>
+                <button class="modal-close" onclick="hideBulkUpdateModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Updating <strong id="bulkUpdateSelectedCount">0</strong> selected students.</p>
+                <form id="bulkUpdateForm">
+                    <div class="form-group">
+                        <label for="bulkUpdateYearInput" class="form-label">New Year</label>
+                        <select id="bulkUpdateYearInput" class="form-select">
+                            <option value="">Select Year</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="bulkUpdateSemesterInput" class="form-label">New Semester</label>
+                        <select id="bulkUpdateSemesterInput" class="form-select">
+                            <option value="">Select Semester</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideBulkUpdateModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveBulkUpdate()">Apply Update</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin-students.js"></script>
+</body>
+</html>

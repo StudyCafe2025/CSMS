@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="departmentDetailsTitle">Department Details - CampusIQ</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <nav class="sidebar">
+            <div class="nav-brand">
+                <h2>CampusIQ</h2>
+                <span class="role-badge">Admin</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <span class="icon">🏠</span> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="students.html" class="nav-link">
+                        <span class="icon">👥</span> Students
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="faculty.html" class="nav-link">
+                        <span class="icon">👨‍🏫</span> Faculty
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="departments.html" class="nav-link active">
+                        <span class="icon">🏢</span> Departments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="subjects.html" class="nav-link">
+                        <span class="icon">📚</span> Subjects
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="subject-allocation.html" class="nav-link">
+                        <span class="icon">🔗</span> Subject Allocation
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="fees.html" class="nav-link">
+                        <span class="icon">💰</span> Fees
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="announcements.html" class="nav-link">
+                        <span class="icon">📣</span> Announcements
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="analytics.html" class="nav-link">
+                        <span class="icon">📊</span> Analytics
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link logout-btn">
+                        <span class="icon">🚪</span> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <h1 id="departmentNameHeader">Department Details</h1>
+                <div class="header-actions">
+                    <span id="departmentCode" class="badge badge-secondary"></span>
+                    <span id="departmentHOD" class="badge badge-info"></span>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Section Navigation -->
+                <div class="card">
+                    <div style="display: flex; gap: 10px;">
+                        <button id="showStudentsBtn" class="btn btn-primary" onclick="departmentDetails.showSection('students')">
+                            <span>👥</span> Students (<span id="totalStudentsCount">0</span>)
+                        </button>
+                        <button id="showFacultyBtn" class="btn btn-secondary" onclick="departmentDetails.showSection('faculty')">
+                            <span>👨‍🏫</span> Faculty (<span id="totalFacultyCount">0</span>)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Students Section -->
+                <div id="studentsSection" class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Students in <span id="studentsDepartmentName"></span></h2>
+                        <a href="students.html?action=add&branch=" class="btn btn-primary btn-sm">
+                            <span>➕</span> Add Student
+                        </a>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Year</th>
+                                    <th>Sem</th>
+                                    <th>Sec</th>
+                                    <th>Status</th>
+                                    <th>View</th>
+                                </tr>
+                            </thead>
+                            <tbody id="departmentStudentsTableBody">
+                                <tr>
+                                    <td colspan="8" class="loading">
+                                        <div class="spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="studentsPagination">
+                        <!-- Pagination buttons will be generated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Faculty Section -->
+                <div id="facultySection" class="card" style="display: none;">
+                    <div class="card-header">
+                        <h2 class="card-title">Faculty in <span id="facultyDepartmentName"></span></h2>
+                        <a href="faculty.html?action=add&department=" class="btn btn-primary btn-sm">
+                            <span>➕</span> Add Faculty
+                        </a>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Faculty ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Designation</th>
+                                    <th>Experience</th>
+                                    <th>Subjects Taught</th>
+                                    <th>View</th>
+                                </tr>
+                            </thead>
+                            <tbody id="departmentFacultyTableBody">
+                                <tr>
+                                    <td colspan="7" class="loading">
+                                        <div class="spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="facultyPagination">
+                        <!-- Pagination buttons will be generated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Student Details Modal -->
+    <div id="studentDetailsModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Student Details</h3>
+                <button class="modal-close" onclick="departmentDetails.hideStudentDetailsModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-details-grid">
+                    <div class="detail-item"><strong>Name:</strong> <span id="modalStudentName"></span></div>
+                    <div class="detail-item"><strong>Student ID:</strong> <span id="modalStudentId"></span></div>
+                    <div class="detail-item"><strong>Email:</strong> <span id="modalStudentEmail"></span></div>
+                    <div class="detail-item"><strong>Phone:</strong> <span id="modalStudentPhone"></span></div>
+                    <div class="detail-item"><strong>Branch:</strong> <span id="modalStudentBranch"></span></div>
+                    <div class="detail-item"><strong>Year:</strong> <span id="modalStudentYear"></span></div>
+                    <div class="detail-item"><strong>Semester:</strong> <span id="modalStudentSemester"></span></div>
+                    <div class="detail-item"><strong>Section:</strong> <span id="modalStudentSection"></span></div>
+                    <div class="detail-item"><strong>DOB:</strong> <span id="modalStudentDOB"></span></div>
+                    <div class="detail-item"><strong>Status:</strong> <span id="modalStudentStatus"></span></div>
+                    <div class="detail-item full-width"><strong>Address:</strong> <span id="modalStudentAddress"></span></div>
+                    <div class="detail-item"><strong>Father's Name:</strong> <span id="modalStudentFatherName"></span></div>
+                    <div class="detail-item"><strong>Mother's Name:</strong> <span id="modalStudentMotherName"></span></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="departmentDetails.hideStudentDetailsModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Faculty Details Modal -->
+    <div id="facultyDetailsModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Faculty Details</h3>
+                <button class="modal-close" onclick="departmentDetails.hideFacultyDetailsModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-details-grid">
+                    <div class="detail-item"><strong>Name:</strong> <span id="modalFacultyName"></span></div>
+                    <div class="detail-item"><strong>Faculty ID:</strong> <span id="modalFacultyId"></span></div>
+                    <div class="detail-item"><strong>Email:</strong> <span id="modalFacultyEmail"></span></div>
+                    <div class="detail-item"><strong>Phone:</strong> <span id="modalFacultyPhone"></span></div>
+                    <div class="detail-item"><strong>Department:</strong> <span id="modalFacultyDepartment"></span></div>
+                    <div class="detail-item"><strong>Designation:</strong> <span id="modalFacultyDesignation"></span></div>
+                    <div class="detail-item"><strong>Qualification:</strong> <span id="modalFacultyQualification"></span></div>
+                    <div class="detail-item"><strong>Experience:</strong> <span id="modalFacultyExperience"></span></div>
+                    <div class="detail-item full-width"><strong>Address:</strong> <span id="modalFacultyAddress"></span></div>
+                    <div class="detail-item full-width"><strong>Subjects Taught:</strong> <span id="modalFacultySubjectsTaught"></span></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="departmentDetails.hideFacultyDetailsModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin-department-details.js"></script>
+</body>
+</html>

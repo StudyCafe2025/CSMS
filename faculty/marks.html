@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marks Management - CampusIQ</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <nav class="sidebar">
+      <div class="nav-brand">
+        <h2>CampusIQ</h2>
+        <span class="role-badge">Faculty</span>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="dashboard.html" class="nav-link">
+            <span class="icon">🏠</span> Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="attendance.html" class="nav-link">
+            <span class="icon">✅</span> Attendance
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="marks.html" class="nav-link active">
+            <span class="icon">📊</span> Marks
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="students.html" class="nav-link">
+            <span class="icon">👥</span> Students
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="timetable.html" class="nav-link">
+            <span class="icon">🗓️</span> Timetable
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="resources.html" class="nav-link">
+            <span class="icon">📚</span> Resources
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="assessments.html" class="nav-link"> <!-- Re-added Assessments link -->
+            <span class="icon">📝</span> Assignments
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link logout-btn">
+            <span class="icon">🚪</span> Logout
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <main class="main-content">
+      <header class="header">
+        <h1>Marks Management</h1>
+        <div class="header-actions">
+          <button class="btn btn-primary" onclick="showAddMarksModal()">
+            <span>➕</span> Add Marks
+          </button>
+        </div>
+      </header>
+
+      <div class="content-area">
+        <!-- Subject and Assessment Selection -->
+        <div class="card">
+          <div class="search-filter-bar">
+            <select id="subjectFilter" class="form-select filter-select" onchange="loadMarks()">
+              <option value="">Select Subject & Class</option>
+            </select>
+            <select id="assessmentFilter" class="form-select filter-select" onchange="facultyMarks.handleMainAssessmentFilterChange()">
+              <option value="">All Assessments</option>
+              <option value="mid1">Mid-1 Exam</option>
+              <option value="mid2">Mid-2 Exam</option>
+              <option value="assignment">Assignment</option>
+              <option value="quiz">Quiz</option>
+              <option value="lab_exam">Lab Exam</option>
+              <option value="project">Project</option>
+              <option value="lab_day_to_day">Lab Day-to-Day</option>
+            </select>
+            <!-- New dropdown for specific assignment when 'Assignment' is selected in assessmentFilter -->
+            <select id="assignmentNumberFilter" class="form-select filter-select" style="display: none;" onchange="loadMarks()">
+                <option value="">Select Assignment</option>
+            </select>
+            <button class="btn btn-secondary" onclick="loadMarks()">
+              <span>🔍</span> View Marks
+            </button>
+            <button class="btn btn-success" onclick="exportMarks()">
+              <span>📈</span> Export Report
+            </button>
+          </div>
+        </div>
+
+        <!-- Marks Summary -->
+        <div class="stats-grid" id="marksStats" style="display: none;">
+          <div class="stat-card">
+            <div class="stat-number" id="totalStudents">0</div>
+            <div class="stat-label">Total Students</div>
+          </div>
+          <div class="stat-card success">
+            <div class="stat-number" id="avgMarks">0</div>
+            <div class="stat-label">Average Marks</div>
+          </div>
+          <div class="stat-card warning">
+            <div class="stat-number" id="highestMarks">0</div>
+            <div class="stat-label">Highest Marks</div>
+          </div>
+          <!-- Removed Passed Students stat card -->
+        </div>
+
+        <!-- Marks Table -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Marks Records</h2>
+            <div>
+              <span id="selectedSubjectMarks" class="badge badge-info"></span>
+              <span id="selectedAssessment" class="badge badge-secondary"></span>
+            </div>
+          </div>
+          <div class="table-container">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Student ID</th>
+                  <th>Student Name</th>
+                  <th>Assessment</th>
+                  <th>Marks Obtained</th>
+                  <th>Max Marks</th>
+                  <th>Percentage</th>
+                  <th>Calculated Internal</th> <!-- New column -->
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="marksTableBody">
+                <tr>
+                  <td colspan="8" class="text-center">Select subject and assessment to view marks</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Performance Analysis -->
+        <div class="card" id="performanceAnalysis" style="display: none;">
+          <div class="card-header">
+            <h2 class="card-title">Performance Analysis</h2>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+              <h4>Grade Distribution</h4>
+              <div id="gradeDistribution"></div> <!-- Content will indicate grades removed -->
+            </div>
+            <div>
+              <h4>Performance Insights</h4>
+              <div id="performanceInsights"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add/Edit Marks Modal -->
+  <div id="marksModal" class="modal-overlay" style="display: none;">
+    <div class="modal" style="max-width: 800px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="marksModalTitle">Add Marks</h3>
+        <button class="modal-close" onclick="hideMarksModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="marksForm">
+          <input type="hidden" id="marksId">
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div class="form-group">
+              <label for="marksSubject" class="form-label">Subject *</label>
+              <select id="marksSubject" class="form-select" required onchange="facultyMarks.handleSubjectChange()">
+                <option value="">Select Subject & Class</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="marksAssessment" class="form-label">Assessment Type *</label>
+              <select id="marksAssessment" class="form-select" required onchange="facultyMarks.handleAssessmentChange()">
+                <option value="">Select Assessment</option>
+                <option value="mid1">Mid-1 Exam</option>
+                <option value="mid2">Mid-2 Exam</option>
+                <option value="assignment">Assignment</option>
+                <option value="quiz">Quiz</option>
+                <option value="lab_exam">Lab Exam</option>
+                <option value="project">Project</option>
+                <option value="lab_day_to_day">Lab Day-to-Day</option> <!-- New option -->
+              </select>
+            </div>
+            <div class="form-group" id="assignmentNumberGroup" style="display: none;">
+              <label for="marksAssignmentNumber" class="form-label">Assignment # *</label>
+              <select id="marksAssignmentNumber" class="form-select" onchange="facultyMarks.handleAssignmentNumberChange()">
+                <option value="">Select Assignment</option>
+              </select>
+            </div>
+            <div class="form-group" id="maxMarksGroup">
+              <label for="marksMaxMarks" class="form-label">Max Marks *</label>
+              <input type="number" id="marksMaxMarks" class="form-input" required min="1" max="100" onchange="facultyMarks.updateAllPercentages()">
+            </div>
+          </div>
+          
+          <div id="studentsMarksList" style="display: none;">
+            <h4>Enter Marks for Students</h4>
+            <div style="margin-bottom: 15px; display: flex; gap: 10px;">
+              <input type="number" id="bulkMarks" class="form-input" placeholder="Enter marks for all" min="0" style="width: 200px;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="facultyMarks.applyBulkMarks()">Apply to All</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="facultyMarks.setAllAbsent()">Mark All Absent</button>
+            </div>
+            <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Student ID</th>
+                    <th>Student Name</th>
+                    <th>Marks</th>
+                    <th>Percentage</th>
+                    <th>Absent</th>
+                  </tr>
+                </thead>
+                <tbody id="studentsMarksBody">
+                  <!-- Student marks inputs will be rendered here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="hideMarksModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveMarks()">Save Marks</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/database.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/marks-calculator.js"></script> <!-- Load marks-calculator.js first -->
+  <script src="../js/faculty-marks.js"></script>
+</body>
+</html>

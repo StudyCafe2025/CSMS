@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subject Management - CampusIQ</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <nav class="sidebar">
+            <div class="nav-brand">
+                <h2>CampusIQ</h2>
+                <span class="role-badge">Admin</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <span class="icon">🏠</span> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="students.html" class="nav-link">
+                        <span class="icon">👥</span> Students
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="faculty.html" class="nav-link">
+                        <span class="icon">👨‍🏫</span> Faculty
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="departments.html" class="nav-link">
+                        <span class="icon">🏢</span> Departments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="subjects.html" class="nav-link active">
+                        <span class="icon">📚</span> Subjects
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="subject-allocation.html" class="nav-link">
+                        <span class="icon">🔗</span> Subject Allocation
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="timetable.html" class="nav-link">
+                        <span class="icon">🗓️</span> Timetable
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="fees.html" class="nav-link">
+                        <span class="icon">💰</span> Fees
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="announcements.html" class="nav-link">
+                        <span class="icon">📣</span> Announcements
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="analytics.html" class="nav-link">
+                        <span class="icon">📈</span> Analytics
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="external-marks.html" class="nav-link">
+                        <span class="icon">📝</span> External Marks
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link logout-btn">
+                        <span class="icon">🚪</span> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <h1>Subject Management</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showAddSubjectModal()">
+                        <span>➕</span> Add Subject
+                    </button>
+                    <button class="btn btn-success" onclick="showImportSubjectModal()">
+                        <span>📥</span> Import Subjects
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Search and Filter Bar -->
+                <div class="card">
+                    <div class="search-filter-bar">
+                        <input type="text" id="searchInput" class="form-input search-input" placeholder="Search by Subject Name or Code...">
+                        <select id="branchFilter" class="form-select filter-select" onchange="adminSubjects.filterSubjects()">
+                            <option value="">All Branches</option>
+                            <option value="Civil Engineering">Civil Engineering</option>
+                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                            <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+                            <option value="Electrical & Electronics Engineering">Electrical & Electronics Engineering</option>
+                            <option value="Computer Science & Engineering (Data Science)">Computer Science & Engineering (Data Science)</option>
+                            <option value="Electronics & Communication Engineering">Electronics & Communication Engineering</option>
+                            <option value="Artificial Intelligence & Data Science">Artificial Intelligence & Data Science</option>
+                            <option value="Artificial Intelligence & Machine Learning">Artificial Intelligence & Machine Learning</option>
+                            <option value="Computer Science & Engineering (Artificial Intelligence)">Computer Science & Engineering (Artificial Intelligence)</option>
+                        </select>
+                        <select id="yearFilter" class="form-select filter-select" onchange="adminSubjects.handleYearFilterChange()">
+                            <option value="">All Years</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                        </select>
+                        <select id="semesterFilter" class="form-select filter-select" onchange="adminSubjects.filterSubjects()">
+                            <option value="">All Semesters</option>
+                            <!-- Populated dynamically by JS -->
+                        </select>
+                        <select id="typeFilter" class="form-select filter-select" onchange="adminSubjects.filterSubjects()">
+                            <option value="">All Types</option>
+                            <option value="theory">Theory</option>
+                            <option value="lab">Lab</option>
+                            <option value="skill_course">Skill Course</option>
+                        </select>
+                        <button class="btn btn-secondary" onclick="exportSubjects()">
+                            <span>📊</span> Export
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Subjects Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">All Subjects</h2>
+                        <div>
+                            <span id="totalCount" class="badge badge-info">0 subjects</span>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Name</th>
+                                    <th>Branch</th>
+                                    <th>Year</th>
+                                    <th>Semester</th>
+                                    <th>Type</th>
+                                    <th>Credits</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="subjectsTableBody">
+                                <tr>
+                                    <td colspan="8" class="loading">
+                                        <div class="spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="pagination">
+                        <!-- Pagination buttons will be generated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Subject Modal -->
+    <div id="subjectModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="subjectModalTitle">Add Subject</h3>
+                <button class="modal-close" onclick="hideSubjectModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="subjectForm">
+                    <input type="hidden" id="subjectId">
+                    <div class="form-group">
+                        <label for="subjectName" class="form-label">Subject Name *</label>
+                        <input type="text" id="subjectName" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subjectCode" class="form-label">Subject Code *</label>
+                        <input type="text" id="subjectCode" class="form-input" required placeholder="e.g., CS301, CE201">
+                    </div>
+                    <div class="form-group">
+                        <label for="subjectBranch" class="form-label">Branch *</label>
+                        <select id="subjectBranch" class="form-select" required>
+                            <option value="">Select Branch</option>
+                            <option value="Civil Engineering">Civil Engineering</option>
+                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                            <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+                            <option value="Electrical & Electronics Engineering">Electrical & Electronics Engineering</option>
+                            <option value="Computer Science & Engineering (Data Science)">Computer Science & Engineering (Data Science)</option>
+                            <option value="Electronics & Communication Engineering">Electronics & Communication Engineering</option>
+                            <option value="Artificial Intelligence & Data Science">Artificial Intelligence & Data Science</option>
+                            <option value="Artificial Intelligence & Machine Learning">Artificial Intelligence & Machine Learning</option>
+                            <option value="Computer Science & Engineering (Artificial Intelligence)">Computer Science & Engineering (Artificial Intelligence)</option>
+                        </select>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label for="subjectYear" class="form-label">Year *</label>
+                            <select id="subjectYear" class="form-select" required onchange="adminSubjects.populateSemesterDropdownForModal()">
+                                <option value="">Select Year</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="subjectSemester" class="form-label">Semester *</label>
+                            <select id="subjectSemester" class="form-select" required>
+                                <option value="">Select Semester</option>
+                                <!-- Populated dynamically by JS -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="subjectType" class="form-label">Type *</label>
+                            <select id="subjectType" class="form-select" required>
+                                <option value="">Select Type</option>
+                                <option value="theory">Theory</option>
+                                <option value="lab">Lab</option>
+                                <option value="skill_course">Skill Course</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="subjectCredits" class="form-label">Credits *</label>
+                        <input type="number" id="subjectCredits" class="form-input" required min="1" max="6">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideSubjectModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveSubject()">Save Subject</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Subjects Modal -->
+    <div id="importSubjectModal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Import Subjects</h3>
+                <button class="modal-close" onclick="hideImportSubjectModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="subjectCsvFile" class="form-label">Select CSV File</label>
+                    <input type="file" id="subjectCsvFile" class="form-input" accept=".csv" onchange="handleSubjectFileSelect(event)">
+                    <small style="color: var(--gray-600);">
+                        Upload a **CSV file** with columns: `name`, `code`, `branch`, `year`, `semester`, `type` (theory/lab/skill_course), `credits`.
+                    </small>
+                </div>
+                <div class="form-group">
+                    <a href="#" onclick="downloadSubjectTemplate()" class="btn btn-secondary btn-sm">
+                        <span>📄</span> Download Template
+                    </a>
+                </div>
+                <div id="importSubjectPreview" style="display: none;">
+                    <h4>Preview (First 5 rows):</h4>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead id="previewSubjectHeader"></thead>
+                            <tbody id="previewSubjectBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="importSubjectResults" style="display: none;">
+                    <div class="alert alert-success">
+                        <strong>Import completed!</strong>
+                        <div id="importSubjectStats"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideImportSubjectModal()">Cancel</button>
+                <button class="btn btn-primary" id="importSubjectBtn" onclick="importSubjects()" disabled>Import Subjects</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin-subjects.js"></script>
+</body>
+</html>

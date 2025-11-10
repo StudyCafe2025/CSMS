@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Marks - CampusIQ</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        /* New styles for marks cards */
+        .marks-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .mark-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-left: 4px solid var(--primary);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        /* Removed grade-specific card colors */
+
+        .mark-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--gray-200);
+            margin-bottom: 10px;
+        }
+        .mark-card-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--gray-800);
+        }
+        .mark-card-body {
+            display: grid;
+            grid-template-columns: 1fr; /* Changed to single column for better readability of multiple items */
+            gap: 8px; /* Reduced gap */
+            font-size: 0.9rem;
+        }
+        .mark-card-body strong {
+            color: var(--gray-700);
+        }
+        .mark-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--gray-200);
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <nav class="sidebar">
+            <div class="nav-brand">
+                <h2>CampusIQ</h2>
+                <span class="role-badge">Student</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <span class="icon">🏠</span> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="attendance.html" class="nav-link">
+                        <span class="icon">🗓️</span> My Attendance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="marks.html" class="nav-link active">
+                        <span class="icon">📊</span> My Marks
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="resources.html" class="nav-link">
+                        <span class="icon">📚</span> Resources
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="assignments.html" class="nav-link">
+                        <span class="icon">📝</span> Assignments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="profile.html" class="nav-link">
+                        <span class="icon">👤</span> Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link logout-btn">
+                        <span class="icon">🚪</span> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <h1>My Marks</h1>
+                <div class="header-actions">
+                    <!-- Export button removed -->
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div id="studentMarksAlert" style="display: none;"></div>
+
+                <!-- Academic Overview -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="currentCGPA">0.0</div>
+                        <div class="stat-label">Current CGPA</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-number" id="creditsEarned">0</div>
+                        <div class="stat-label">Credits Earned</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-number" id="overallPercentage">0%</div>
+                        <div class="stat-label">Overall Percentage</div>
+                    </div>
+                    <div class="stat-card error">
+                        <div class="stat-number" id="backlogSubjects">0</div>
+                        <div class="stat-label">Backlog Subjects</div>
+                    </div>
+                </div>
+
+                <!-- Filter Bar -->
+                <div class="card">
+                    <div class="search-filter-bar">
+                        <select id="semesterFilter" class="form-select filter-select" onchange="studentMarks.filterMarks()">
+                            <option value="">All Semesters</option>
+                            <!-- Options populated by JS -->
+                        </select>
+                        <select id="subjectFilter" class="form-select filter-select" onchange="studentMarks.filterMarks()">
+                            <option value="">All Subjects</option>
+                            <!-- Options populated by JS -->
+                        </select>
+                        <!-- Removed assessmentFilter -->
+                    </div>
+                </div>
+
+                <!-- Detailed Marks (Card View) -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Detailed Marks by Subject</h2>
+                        <div>
+                            <span id="filteredMarksCount" class="badge badge-info">0 subjects</span>
+                        </div>
+                    </div>
+                    <div id="detailedMarksCards" class="marks-cards-grid">
+                        <!-- Marks cards will be rendered here by JavaScript -->
+                        <div class="loading">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                    <div class="pagination" id="pagination">
+                        <!-- Pagination buttons will be generated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Subject-wise Performance Summary -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Subject-wise Performance Summary</h2>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Total Marks</th>
+                                    <th>Max Total Marks</th>
+                                    <th>Overall %</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="subjectSummaryTableBody">
+                                <tr>
+                                    <td colspan="5" class="loading">
+                                        <div class="spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/marks-calculator.js"></script> <!-- Load marks-calculator.js first -->
+    <script src="../js/student-marks.js"></script>
+</body>
+</html>

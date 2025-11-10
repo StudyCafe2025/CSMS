@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - CampusIQ</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    .profile-sections {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .profile-sections .btn {
+      flex: 1;
+    }
+    .profile-details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    .profile-details-grid .detail-item.full-width {
+      grid-column: 1 / -1;
+    }
+    .profile-details-grid strong {
+      color: var(--gray-700);
+    }
+    .profile-picture {
+      background-color: var(--primary);
+      color: white;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-layout">
+    <nav class="sidebar">
+      <div class="nav-brand">
+        <h2>CampusIQ</h2>
+        <span class="role-badge">Faculty</span>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="dashboard.html" class="nav-link">
+            <span class="icon">🏠</span> Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="attendance.html" class="nav-link">
+            <span class="icon">✅</span> Attendance
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="marks.html" class="nav-link">
+            <span class="icon">📊</span> Marks
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="students.html" class="nav-link">
+            <span class="icon">👥</span> Students
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="timetable.html" class="nav-link">
+            <span class="icon">📅</span> Timetable
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="resources.html" class="nav-link">
+            <span class="icon">📚</span> Resources
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="assessments.html" class="nav-link">
+            <span class="icon">📝</span> Assignments
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="profile.html" class="nav-link active">
+            <span class="icon">👤</span> Profile
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link logout-btn">
+            <span class="icon">🚪</span> Logout
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <main class="main-content">
+      <header class="header">
+        <h1>My Profile</h1>
+        <div class="header-actions">
+          <!-- Edit button moved inside personal details section -->
+        </div>
+      </header>
+
+      <div class="content-area">
+        <div id="profileAlert" style="display: none;"></div>
+
+        <!-- Profile Overview -->
+        <div style="display: grid; grid-template-columns: 300px 1fr; gap: 30px; margin-bottom: 20px;">
+          <!-- Profile Picture and Basic Info -->
+          <div class="card">
+            <div style="text-align: center;">
+              <div class="profile-picture" style="width: 120px; height: 120px; margin: 0 auto 20px; background: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+                <span id="profileInitials">F</span>
+              </div>
+              <h3 id="profileName" style="margin: 0 0 5px 0; color: var(--gray-800);"></h3>
+              <p id="profileFacultyId" style="margin: 0 0 10px 0; color: var(--gray-600); font-size: 0.9rem;"></p>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <span class="badge badge-info" id="profileDepartment"></span>
+                <span class="badge badge-secondary" id="profileDesignation"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile Sections (Personal/Academic) -->
+          <div>
+            <div class="profile-sections">
+              <button class="btn btn-primary" id="showPersonalDetailsBtn">Personal Details</button>
+              <button class="btn btn-secondary" id="showAcademicProfessionalDetailsBtn">Academic/Professional Details</button>
+            </div>
+
+            <!-- Personal Details Section -->
+            <div id="personalDetailsSection" class="card">
+              <div class="card-header">
+                <h2 class="card-title">Personal Information</h2>
+                <button class="btn btn-primary btn-sm" id="toggleEditPersonalBtn">
+                  <span id="toggleEditPersonalIcon">✏️</span> <span id="toggleEditPersonalText">Edit Personal Details</span>
+                </button>
+              </div>
+              <form id="personalDetailsForm">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                  <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" id="name" class="form-input" readonly>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="email" class="form-input" readonly>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" id="phone" class="form-input" readonly>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Qualification</label>
+                    <input type="text" id="qualification" class="form-input" readonly>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Experience (Years)</label>
+                    <input type="number" id="experience" class="form-input" readonly>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Address</label>
+                  <textarea id="address" class="form-textarea" rows="3" readonly></textarea>
+                </div>
+                <div id="personalEditActions" style="display: none; margin-top: 20px; text-align: right;">
+                  <button type="button" class="btn btn-secondary" id="cancelPersonalBtn">Cancel</button>
+                  <button type="button" class="btn btn-primary" id="savePersonalBtn">Save Changes</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Academic/Professional Details Section -->
+            <div id="academicProfessionalDetailsSection" class="card" style="display: none;">
+              <div class="card-header">
+                <h2 class="card-title">Academic & Professional Information</h2>
+                <span class="badge badge-warning">View Only</span>
+              </div>
+              <div class="profile-details-grid">
+                <div class="detail-item"><strong>Faculty ID:</strong> <span id="academicFacultyId"></span></div>
+                <div class="detail-item"><strong>Department:</strong> <span id="academicDepartment"></span></div>
+                <div class="detail-item"><strong>Designation:</strong> <span id="academicDesignation"></span></div>
+              </div>
+              <hr style="margin: 20px 0; border: none; border-top: 1px dashed var(--gray-200);">
+              <h4 style="margin-bottom: 10px;">Subjects Taught:</h4>
+              <ul id="subjectsTaughtList" style="list-style: disc; padding-left: 20px; color: var(--gray-700);">
+                <!-- Subjects will be populated here by JS -->
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Change Password Section -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Change Password</h2>
+          </div>
+          <form id="passwordForm">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; max-width: 600px;">
+              <div class="form-group">
+                <label class="form-label">Current Password</label>
+                <input type="password" id="currentPassword" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">New Password</label>
+                <input type="password" id="newPassword" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Confirm Password</label>
+                <input type="password" id="confirmPassword" class="form-input" required>
+              </div>
+            </div>
+            <div style="margin-top: 15px;">
+              <button type="submit" class="btn btn-primary">Change Password</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/database.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/faculty-profile.js"></script>
+</body>
+</html>

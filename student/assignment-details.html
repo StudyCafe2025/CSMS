@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="assignmentDetailsTitle">Assignment Details - CampusIQ</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .assignment-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .assignment-details-grid .detail-item.full-width {
+            grid-column: 1 / -1;
+        }
+        .assignment-details-grid strong {
+            color: var(--gray-700);
+        }
+        .questions-section, .download-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-200);
+        }
+        .questions-section ol {
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+        .questions-section li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+            color: var(--gray-700);
+        }
+        .download-section {
+            text-align: center;
+        }
+        .download-section p {
+            margin-bottom: 15px;
+            font-weight: 500;
+            color: var(--gray-800);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <nav class="sidebar">
+            <div class="nav-brand">
+                <h2>CampusIQ</h2>
+                <span class="role-badge">Student</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <span class="icon">🏠</span> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="attendance.html" class="nav-link">
+                        <span class="icon">🗓️</span> My Attendance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="marks.html" class="nav-link">
+                        <span class="icon">📊</span> My Marks
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="resources.html" class="nav-link">
+                        <span class="icon">📚</span> Resources
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="assignments.html" class="nav-link active">
+                        <span class="icon">📝</span> Assignments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="profile.html" class="nav-link">
+                        <span class="icon">👤</span> Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link logout-btn">
+                        <span class="icon">🚪</span> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <h1 id="detailTitle">Assignment Details</h1>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" id="backToAssignmentsBtn">
+                        <span>⬅️</span> Back to Assignments
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div id="assignmentDetailsAlert" style="display: none;"></div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Assignment Information</h2>
+                    </div>
+                    <div class="assignment-details-grid">
+                        <div class="detail-item"><strong>Title:</strong> <span id="detailTitle"></span></div>
+                        <div class="detail-item"><strong>Subject:</strong> <span id="detailSubject"></span></div>
+                        <div class="detail-item"><strong>Class:</strong> <span id="detailClass"></span></div>
+                        <div class="detail-item"><strong>Type:</strong> <span id="detailType"></span></div>
+                        <div class="detail-item"><strong>Due Date:</strong> <span id="detailDueDate"></span></div>
+                        <div class="detail-item"><strong>Max Marks:</strong> <span id="detailMaxMarks"></span></div>
+                        <div class="detail-item"><strong>Uploaded By:</strong> <span id="detailUploadedBy"></span></div>
+                        <div class="detail-item"><strong>Uploaded On:</strong> <span id="detailUploadedOn"></span></div>
+                        <div class="detail-item full-width"><strong>Description:</strong> <span id="detailDescription"></span></div>
+                    </div>
+
+                    <div id="detailQuestionsSection" class="questions-section" style="display: none;">
+                        <h4 style="margin-bottom: 10px;">Questions:</h4>
+                        <ol id="detailQuestionsList"></ol>
+                    </div>
+
+                    <div id="downloadSection" class="download-section" style="display: none;">
+                        <h4 style="margin-bottom: 15px;">Download Assignment Question Paper</h4>
+                        <p id="downloadFileName"></p>
+                        <button class="btn btn-primary" id="downloadAssignmentBtn">
+                            <span>📥</span> Download File
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/student-assignment-details.js"></script>
+</body>
+</html>

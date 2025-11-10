@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fee Management - CampusIQ</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <nav class="sidebar">
+            <div class="nav-brand">
+                <h2>CampusIQ</h2>
+                <span class="role-badge">Admin</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <span class="icon">🏠</span> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="students.html" class="nav-link">
+                        <span class="icon">👥</span> Students
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="faculty.html" class="nav-link">
+                        <span class="icon">👨‍🏫</span> Faculty
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="departments.html" class="nav-link">
+                        <span class="icon">🏢</span> Departments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="subjects.html" class="nav-link">
+                        <span class="icon">📚</span> Subjects
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="subject-allocation.html" class="nav-link">
+                        <span class="icon">🔗</span> Subject Allocation
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="fees.html" class="nav-link active">
+                        <span class="icon">💰</span> Fees
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="announcements.html" class="nav-link">
+                        <span class="icon">📣</span> Announcements
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="analytics.html" class="nav-link">
+                        <span class="icon">📊</span> Analytics
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link logout-btn">
+                        <span class="icon">🚪</span> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <h1>Fee Management</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showAddFeeModal()">
+                        <span>➕</span> Add Fee Record
+                    </button>
+                    <button class="btn btn-success" onclick="showImportFeesModal()">
+                        <span>📥</span> Import Fees
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Quick Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalFeeRecords">0</div>
+                        <div class="stat-label">Total Fee Records</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-number" id="totalCollected">₹0</div>
+                        <div class="stat-label">Total Collected</div>
+                    </div>
+                    <div class="stat-card error">
+                        <div class="stat-number" id="totalDue">₹0</div>
+                        <div class="stat-label">Total Due</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-number" id="partiallyPaid">0</div>
+                        <div class="stat-label">Partially Paid</div>
+                    </div>
+                </div>
+
+                <!-- Search and Filter Bar -->
+                <div class="card">
+                    <div class="search-filter-bar">
+                        <input type="text" id="searchInput" class="form-input search-input" placeholder="Search by Student ID or Name...">
+                        <select id="semesterFilter" class="form-select filter-select">
+                            <option value="">All Semesters</option>
+                            <option value="1">Semester 1</option>
+                            <option value="2">Semester 2</option>
+                            <option value="3">Semester 3</option>
+                            <option value="4">Semester 4</option>
+                            <option value="5">Semester 5</option>
+                            <option value="6">Semester 6</option>
+                            <option value="7">Semester 7</option>
+                            <option value="8">Semester 8</option>
+                        </select>
+                        <select id="statusFilter" class="form-select filter-select">
+                            <option value="">All Status</option>
+                            <option value="paid">Paid</option>
+                            <option value="partially_paid">Partially Paid</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                        <button class="btn btn-secondary" onclick="exportFees()">
+                            <span>📊</span> Export
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Fee Records Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">All Fee Records</h2>
+                        <div>
+                            <span id="filteredCount" class="badge badge-info">0 records</span>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Student Name</th>
+                                    <th>Semester</th>
+                                    <th>Total Fee</th>
+                                    <th>Paid Amount</th>
+                                    <th>Due Amount</th>
+                                    <th>Status</th>
+                                    <th>Payment Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="feeTableBody">
+                                <tr>
+                                    <td colspan="9" class="loading">
+                                        <div class="spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="pagination">
+                        <!-- Pagination buttons will be generated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Fee Modal -->
+    <div id="feeModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="feeModalTitle">Add Fee Record</h3>
+                <button class="modal-close" onclick="hideFeeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="feeForm">
+                    <input type="hidden" id="feeId">
+                    <div class="form-group">
+                        <label for="studentIdInput" class="form-label">Student ID *</label>
+                        <input type="text" id="studentIdInput" class="form-input" required placeholder="Enter Student ID (e.g., CS2021001)" onblur="adminFees.loadStudentName()">
+                        <small id="studentNameDisplay" style="color: var(--gray-600); margin-top: 5px; display: block;"></small>
+                    </div>
+                    <div class="form-group">
+                        <label for="feeSemester" class="form-label">Semester *</label>
+                        <select id="feeSemester" class="form-select" required>
+                            <option value="">Select Semester</option>
+                            <option value="1">Semester 1</option>
+                            <option value="2">Semester 2</option>
+                            <option value="3">Semester 3</option>
+                            <option value="4">Semester 4</option>
+                            <option value="5">Semester 5</option>
+                            <option value="6">Semester 6</option>
+                            <option value="7">Semester 7</option>
+                            <option value="8">Semester 8</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="totalFee" class="form-label">Total Fee *</label>
+                        <input type="number" id="totalFee" class="form-input" required min="0" oninput="adminFees.calculateDue()">
+                    </div>
+                    <div class="form-group">
+                        <label for="paidAmount" class="form-label">Paid Amount *</label>
+                        <input type="number" id="paidAmount" class="form-input" required min="0" oninput="adminFees.calculateDue()">
+                    </div>
+                    <div class="form-group">
+                        <label for="dueAmount" class="form-label">Due Amount</label>
+                        <input type="number" id="dueAmount" class="form-input" readonly style="background-color: var(--gray-100);">
+                    </div>
+                    <div class="form-group">
+                        <label for="paymentDate" class="form-label">Payment Date</label>
+                        <input type="date" id="paymentDate" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="feeStatus" class="form-label">Status</label>
+                        <select id="feeStatus" class="form-select">
+                            <option value="pending">Pending</option>
+                            <option value="partially_paid">Partially Paid</option>
+                            <option value="paid">Paid</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideFeeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveFee()">Save Fee Record</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Fees Modal -->
+    <div id="importFeesModal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Import Fee Records</h3>
+                <button class="modal-close" onclick="hideImportFeesModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="feesCsvFile" class="form-label">Select CSV File</label>
+                    <input type="file" id="feesCsvFile" class="form-input" accept=".csv" onchange="handleFeesFileSelect(event)">
+                    <small style="color: var(--gray-600);"> Upload a **CSV file** with columns: `student_id`, `semester`, `total_fee`, `paid_amount`, `payment_date` (YYYY-MM-DD), `status` (paid/partially_paid/pending). </small>
+                </div>
+                <div class="form-group">
+                    <a href="#" onclick="downloadFeesTemplate()" class="btn btn-secondary btn-sm">
+                        <span>📄</span> Download Template
+                    </a>
+                </div>
+                <div id="importFeesPreview" style="display: none;">
+                    <h4>Preview (First 5 rows):</h4>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead id="previewFeesHeader"></thead>
+                            <tbody id="previewFeesBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="importFeesResults" style="display: none;">
+                    <div class="alert alert-success">
+                        <strong>Import completed!</strong>
+                        <div id="importFeesStats"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideImportFeesModal()">Cancel</button>
+                <button class="btn btn-primary" id="importFeesBtn" onclick="importFees()" disabled>Import Fees</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin-fees.js"></script>
+</body>
+</html>

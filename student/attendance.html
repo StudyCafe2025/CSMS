@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Attendance - CampusIQ</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .calendar-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: var(--gray-100);
+            border-radius: 8px;
+        }
+        .calendar-navigation button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .calendar-navigation button:hover {
+            background: #1d4ed8;
+        }
+        .calendar-navigation h3 {
+            margin: 0;
+            color: var(--gray-800);
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        .calendar-header {
+            display: contents; /* Allows children to be placed directly in the grid */
+        }
+        .calendar-header > div {
+            text-align: center;
+            font-weight: 600;
+            padding: 8px;
+            background: var(--gray-100);
+            border-radius: 4px;
+            color: var(--gray-700);
+        }
+        .calendar-days {
+            display: contents; /* Allows children to be placed directly in the grid */
+        }
+        .calendar-day {
+            padding: 8px;
+            min-height: 40px;
+            background: var(--gray-50);
+            text-align: center;
+            cursor: pointer;
+            border-radius: 4px;
+            color: var(--gray-800);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        .calendar-day:hover {
+            background-color: var(--gray-100);
+        }
+        .calendar-day.empty {
+            background: var(--gray-200);
+            cursor: default;
+        }
+        .calendar-day.present {
+            background: var(--success);
+            color: white;
+        }
+        .calendar-day.absent {
+            background: var(--error);
+            color: white;
+        }
+        .calendar-day.present:hover {
+            background: #047857;
+        }
+        .calendar-day.absent:hover {
+            background: #b91c1c;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <nav class="sidebar">
+            <div class="nav-brand">
+                <h2>CampusIQ</h2>
+                <span class="role-badge">Student</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <span class="icon">🏠</span> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="attendance.html" class="nav-link active">
+                        <span class="icon">📅</span> My Attendance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="marks.html" class="nav-link">
+                        <span class="icon">📊</span> My Marks
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="resources.html" class="nav-link">
+                        <span class="icon">📚</span> Resources
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="assignments.html" class="nav-link">
+                        <span class="icon">📝</span> Assignments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="profile.html" class="nav-link">
+                        <span class="icon">👤</span> Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link logout-btn">
+                        <span class="icon">🚪</span> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <h1>My Attendance</h1>
+                <div class="header-actions">
+                    <!-- Export button removed -->
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div id="attendanceAlert" style="display: none;"></div>
+
+                <!-- Overall Attendance Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="overallAttendance">0%</div>
+                        <div class="stat-label">Overall Attendance</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-number" id="totalClasses">0</div>
+                        <div class="stat-label">Total Classes</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-number" id="classesPresent">0</div>
+                        <div class="stat-label">Classes Present</div>
+                    </div>
+                    <div class="stat-card error">
+                        <div class="stat-number" id="classesAbsent">0</div>
+                        <div class="stat-label">Classes Absent</div>
+                    </div>
+                </div>
+
+                <!-- Calendar View -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Monthly Overview</h2>
+                        <div class="calendar-navigation">
+                            <button onclick="studentAttendance.changeMonth(-1)">◀️ Previous</button>
+                            <h3 id="currentMonth"></h3>
+                            <button onclick="studentAttendance.changeMonth(1)">Next ▶️</button>
+                        </div>
+                    </div>
+                    <div id="calendarGrid">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subject-wise Attendance -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Subject-wise Attendance</h2>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Code</th>
+                                    <th>Total Classes</th>
+                                    <th>Present</th>
+                                    <th>Absent</th>
+                                    <th>Percentage</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="subjectAttendanceBody">
+                                <tr>
+                                    <td colspan="8" class="loading">
+                                        <div class="spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Recent Attendance -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Recent Attendance</h2>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Subject</th>
+                                    <th>Status</th>
+                                    <th>Reason</th>
+                                    <th>Marked By</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentAttendanceBody">
+                                <tr>
+                                    <td colspan="5" class="loading">
+                                        <div class="spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Weekly Attendance Trend -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Weekly Attendance Trend</h2>
+                    </div>
+                    <div id="weeklyChart">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attendance Insights -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Attendance Insights</h2>
+                    </div>
+                    <div id="attendanceInsights">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/student-attendance.js"></script>
+</body>
+</html>

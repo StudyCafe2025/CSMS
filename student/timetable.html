@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Timetable - CampusIQ</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .timetable-grid {
+            display: grid;
+            /* grid-template-columns defined by JS */
+            gap: 1px;
+            background-color: var(--gray-200); /* Grid lines */
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .timetable-header-cell, .timetable-time-cell, .timetable-class-cell {
+            background-color: var(--card);
+            padding: 10px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--gray-800);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .timetable-header-cell {
+            font-weight: 600;
+            background-color: var(--gray-100);
+            color: var(--neon-a);
+        }
+        .timetable-time-cell {
+            font-weight: 500;
+            background-color: var(--gray-50);
+            color: var(--muted);
+        }
+        .timetable-class-cell {
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+            padding: 8px;
+            min-height: 80px;
+            position: relative; /* For action buttons */
+            border: 1px solid transparent; /* For altered/suspended borders */
+        }
+        .timetable-class-cell:hover {
+            background-color: var(--gray-50);
+        }
+        .timetable-class-cell.empty {
+            background-color: var(--gray-100);
+            cursor: default;
+            color: var(--muted);
+        }
+        .timetable-class-cell .subject-name {
+            font-weight: 600;
+            color: var(--neon-a);
+            font-size: 0.95rem;
+        }
+        .timetable-class-cell .class-details {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+        .timetable-class-cell .room-details {
+            font-size: 0.7rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+        .day-header {
+            grid-column: 1 / -1; /* Span across all columns */
+            background-color: var(--primary);
+            color: white;
+            padding: 12px;
+            font-weight: 700;
+            text-align: center;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+        .timetable-day-row {
+            display: contents; /* Allows children to be placed directly in the grid */
+        }
+        /* Specific styles for lunch break cell */
+        .timetable-class-cell.lunch-break {
+            background-color: var(--gray-100);
+            color: var(--muted);
+            font-weight: 600;
+            grid-column: span 1; /* Ensure it spans only one period slot */
+        }
+        .timetable-class-cell .actions {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            display: none; /* Hidden by default */
+            gap: 5px;
+        }
+        .timetable-class-cell:hover .actions {
+            display: flex; /* Show on hover */
+        }
+        .timetable-class-cell.suspended {
+            background-color: #fef2f2; /* Light red background */
+            border-color: var(--error-color);
+            opacity: 0.7;
+            text-decoration: line-through;
+        }
+        .timetable-class-cell.altered {
+            background-color: #fffbeb; /* Light yellow background */
+            border-color: var(--warning-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <nav class="sidebar">
+            <div class="nav-brand">
+                <h2>CampusIQ</h2>
+                <span class="role-badge">Student</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <span class="icon">🏠</span> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="attendance.html" class="nav-link">
+                        <span class="icon">🗓️</span> My Attendance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="marks.html" class="nav-link">
+                        <span class="icon">📊</span> My Marks
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="resources.html" class="nav-link">
+                        <span class="icon">📚</span> Resources
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="assignments.html" class="nav-link">
+                        <span class="icon">📝</span> Assignments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="timetable.html" class="nav-link active">
+                        <span class="icon">📅</span> My Timetable
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="profile.html" class="nav-link">
+                        <span class="icon">👤</span> Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link logout-btn">
+                        <span class="icon">🚪</span> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <h1>My Timetable</h1>
+                <div class="header-actions">
+                    <button class="btn secondary btn-sm" onclick="studentTimetable.changeViewDate(-1)">
+                        <span>&larr;</span> Previous Day
+                    </button>
+                    <span id="currentWeekRange" class="muted" style="margin: 0 10px;"></span>
+                    <button class="btn secondary btn-sm" onclick="studentTimetable.changeViewDate(1)">
+                        Next Day <span>&rarr;</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div id="timetableAlert" style="display: none;"></div>
+
+                <!-- Timetable Display -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Daily Schedule</h2>
+                    </div>
+                    <div id="timetableContainer">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/student-timetable.js"></script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard - CampusIQ</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <nav class="sidebar">
+            <div class="nav-brand">
+                <h2>CampusIQ</h2>
+                <span class="role-badge">Admin</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <span class="icon">🏠</span> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="students.html" class="nav-link">
+                        <span class="icon">👥</span> Students
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="faculty.html" class="nav-link">
+                        <span class="icon">👨‍🏫</span> Faculty
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="departments.html" class="nav-link">
+                        <span class="icon">🏢</span> Departments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="subjects.html" class="nav-link">
+                        <span class="icon">📚</span> Subjects
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="subject-allocation.html" class="nav-link">
+                        <span class="icon">🔗</span> Subject Allocation
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="fees.html" class="nav-link">
+                        <span class="icon">💰</span> Fees
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="announcements.html" class="nav-link">
+                        <span class="icon">📣</span> Announcements
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="analytics.html" class="nav-link active">
+                        <span class="icon">📊</span> Analytics
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link logout-btn">
+                        <span class="icon">🚪</span> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <h1>Analytics Dashboard</h1>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="adminAnalytics.exportAnalytics()">
+                        <span>📤</span> Export Data
+                    </button>
+                    <button class="btn btn-primary" onclick="adminAnalytics.loadAnalytics()">
+                        <span>🔄</span> Refresh
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div id="analyticsAlert" style="display: none;"></div>
+
+                <!-- Filter Bar -->
+                <div class="card">
+                    <div class="search-filter-bar">
+                        <select id="branchFilter" class="form-select filter-select" onchange="adminAnalytics.filterCharts()">
+                            <option value="">All Branches</option>
+                            <option value="Civil Engineering">Civil Engineering</option>
+                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                            <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+                            <option value="Electrical & Electronics Engineering">Electrical & Electronics Engineering</option>
+                            <option value="Computer Science & Engineering (Data Science)">Computer Science & Engineering (Data Science)</option>
+                            <option value="Electronics & Communication Engineering">Electronics & Communication Engineering</option>
+                            <option value="Artificial Intelligence & Data Science">Artificial Intelligence & Data Science</option>
+                            <option value="Artificial Intelligence & Machine Learning">Artificial Intelligence & Machine Learning</option>
+                            <option value="Computer Science & Engineering (Artificial Intelligence)">Computer Science & Engineering (Artificial Intelligence)</option>
+                        </select>
+                        <select id="yearFilter" class="form-select filter-select" onchange="adminAnalytics.filterCharts()">
+                            <option value="">All Years</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                        </select>
+                        <select id="semesterFilter" class="form-select filter-select" onchange="adminAnalytics.filterCharts()">
+                            <option value="">All Semesters</option>
+                            <option value="1">Semester 1</option>
+                            <option value="2">Semester 2</option>
+                            <option value="3">Semester 3</option>
+                            <option value="4">Semester 4</option>
+                            <option value="5">Semester 5</option>
+                            <option value="6">Semester 6</option>
+                            <option value="7">Semester 7</option>
+                            <option value="8">Semester 8</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Key Metrics -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalStudentsMetric">0</div>
+                        <div class="stat-label">Total Students</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-number" id="avgAttendanceMetric">0%</div>
+                        <div class="stat-label">Avg. Attendance</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-number" id="avgPerformanceMetric">0%</div>
+                        <div class="stat-label">Avg. Performance</div>
+                    </div>
+                    <div class="stat-card error">
+                        <div class="stat-number" id="pendingFeesMetric">₹0</div>
+                        <div class="stat-label">Pending Fees</div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Student Enrollment by Branch</h2>
+                        </div>
+                        <div style="height: 300px;">
+                            <canvas id="enrollmentChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Attendance Rate by Branch</h2>
+                        </div>
+                        <div style="height: 300px;">
+                            <canvas id="attendanceChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Fee Collection Status</h2>
+                        </div>
+                        <div style="height: 300px;">
+                            <canvas id="feeChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Overall Academic Performance</h2>
+                        </div>
+                        <div style="height: 300px;">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Reports -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Departmental Overview</h2>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Department</th>
+                                    <th>Total Students</th>
+                                    <th>Total Faculty</th>
+                                    <th>Avg. Attendance %</th>
+                                    <th>Fee Collection %</th>
+                                </tr>
+                            </thead>
+                            <tbody id="departmentOverviewTable">
+                                <tr>
+                                    <td colspan="5" class="loading">
+                                        <div class="spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin-analytics.js"></script>
+</body>
+</html>

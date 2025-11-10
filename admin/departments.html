@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Department Management - CampusIQ</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <nav class="sidebar">
+            <div class="nav-brand">
+                <h2>CampusIQ</h2>
+                <span class="role-badge">Admin</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <span class="icon">🏠</span> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="students.html" class="nav-link">
+                        <span class="icon">👥</span> Students
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="faculty.html" class="nav-link">
+                        <span class="icon">👨‍🏫</span> Faculty
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="departments.html" class="nav-link active">
+                        <span class="icon">🏢</span> Departments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="subjects.html" class="nav-link">
+                        <span class="icon">📚</span> Subjects
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="subject-allocation.html" class="nav-link">
+                        <span class="icon">🔗</span> Subject Allocation
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="fees.html" class="nav-link">
+                        <span class="icon">💰</span> Fees
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="announcements.html" class="nav-link">
+                        <span class="icon">📣</span> Announcements
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="analytics.html" class="nav-link">
+                        <span class="icon">📊</span> Analytics
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link logout-btn">
+                        <span class="icon">🚪</span> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <h1>Department Management</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showAddDepartmentModal()">
+                        <span>➕</span> Add Department
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Search Bar -->
+                <div class="card">
+                    <div class="search-filter-bar">
+                        <input type="text" id="searchInput" class="form-input search-input" placeholder="Search by Department Name or Code...">
+                        <button class="btn btn-secondary" onclick="exportDepartments()">
+                            <span>📊</span> Export
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Departments Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">All Departments</h2>
+                        <div>
+                            <span id="totalCount" class="badge badge-info">0 departments</span>
+                            <button class="btn btn-danger btn-sm" onclick="deleteAllDepartments()" style="margin-left: 10px;">
+                                <span>🗑️</span> Delete All
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Department Name</th>
+                                    <th>Head of Department</th>
+                                    <th>Students</th>
+                                    <th>Faculty</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="departmentsTableBody">
+                                <tr>
+                                    <td colspan="6" class="loading">
+                                        <div class="spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="pagination">
+                        <!-- Pagination buttons will be generated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Department Modal -->
+    <div id="departmentModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="departmentModalTitle">Add Department</h3>
+                <button class="modal-close" onclick="hideDepartmentModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="departmentForm">
+                    <input type="hidden" id="departmentId">
+                    <div class="form-group">
+                        <label for="departmentName" class="form-label">Department Name *</label>
+                        <input type="text" id="departmentName" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="departmentCode" class="form-label">Department Code *</label>
+                        <input type="text" id="departmentCode" class="form-input" required placeholder="e.g., CSE, ME, CE">
+                    </div>
+                    <div class="form-group">
+                        <label for="headOfDepartment" class="form-label">Head of Department</label>
+                        <input type="text" id="headOfDepartment" class="form-input" placeholder="e.g., Dr. John Smith">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label class="form-label">Total Students</label>
+                            <input type="text" id="totalStudents" class="form-input" readonly style="background-color: var(--gray-100);">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Total Faculty</label>
+                            <input type="text" id="totalFaculty" class="form-input" readonly style="background-color: var(--gray-100);">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideDepartmentModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveDepartment()">Save Department</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin-departments.js"></script>
+</body>
+</html>

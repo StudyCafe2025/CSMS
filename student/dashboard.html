@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard - CampusIQ</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <nav class="sidebar">
+      <div class="nav-brand">
+        <h2>CampusIQ</h2>
+        <span class="role-badge">Student</span>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="dashboard.html" class="nav-link active">
+            <span class="icon">🏠</span> Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="attendance.html" class="nav-link">
+            <span class="icon">🗓️</span> My Attendance
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="marks.html" class="nav-link">
+            <span class="icon">📊</span> My Marks
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="resources.html" class="nav-link">
+            <span class="icon">📚</span> Resources
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="assignments.html" class="nav-link">
+            <span class="icon">📝</span> Assignments
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="timetable.html" class="nav-link">
+            <span class="icon">🗓️</span> My Timetable
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="profile.html" class="nav-link">
+            <span class="icon">👤</span> Profile
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link logout-btn">
+            <span class="icon">🚪</span> Logout
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <main class="main-content">
+      <header class="header">
+        <h1>Student Dashboard</h1>
+        <div class="header-actions">
+          <span id="currentDateTime"></span>
+          <span id="userWelcome"></span>
+        </div>
+      </header>
+
+      <div class="content-area">
+        <div id="dashboardAlert" style="display: none;"></div> <!-- New alert container -->
+
+        <!-- Academic Overview -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number" id="overallAttendance">0%</div>
+            <div class="stat-label">Overall Attendance</div>
+          </div>
+          <div class="stat-card success">
+            <div class="stat-number" id="currentCGPA">0.0</div>
+            <div class="stat-label">Current CGPA</div>
+          </div>
+          <div class="stat-card warning">
+            <div class="stat-number" id="creditsCompleted">0</div>
+            <div class="stat-label">Credits Completed</div>
+          </div>
+          <div class="stat-card error">
+            <div class="stat-number" id="pendingFees">₹0</div>
+            <div class="stat-label">Pending Fees</div>
+          </div>
+        </div>
+
+        <!-- Today's Classes and Recent Updates -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Today's Classes</h2>
+              <span id="todayDate"></span>
+            </div>
+            <div id="todayClasses">
+              <div class="loading">
+                <div class="spinner"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Recent Updates</h2>
+            </div>
+            <div id="recentUpdates">
+              <div class="loading">
+                <div class="spinner"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Announcements -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Announcements</h2>
+          </div>
+          <div id="announcements">
+            <div class="loading">
+              <div class="spinner"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subject-wise Attendance and Performance Charts -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Subject-wise Attendance</h2>
+            </div>
+            <div id="attendanceBars">
+              <div class="loading">
+                <div class="spinner"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Subject-wise Performance</h2>
+            </div>
+            <div id="performanceBars">
+              <div class="loading">
+                <div class="spinner"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upcoming Events -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Upcoming Events</h2>
+          </div>
+          <div class="table-container">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Event</th>
+                  <th>Subject</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Priority</th>
+                </tr>
+              </thead>
+              <tbody id="upcomingEvents">
+                <tr>
+                  <td colspan="5" class="loading">
+                    <div class="spinner"></div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/database.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/marks-calculator.js"></script> <!-- Load marks-calculator.js first -->
+  <script src="../js/student-dashboard.js"></script>
+</body>
+</html>
